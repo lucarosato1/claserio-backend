@@ -1,58 +1,58 @@
 const express = require("express");
 const router = express.Router();
 
-// Import student
-const studentSchema = require("../model/student");
+// Import teacher
+const teacherSchema = require("../model/teacher");
 
-// Create student
-router.post("/students", (req, res) => {
-    const student = studentSchema(req.body);
-    student
+// Create teacher
+router.post("/teachers", (req, res) => {
+    const teacher = teacherSchema(req.body);
+    teacher
         .save()
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 });
 
-// Get All students
-router.get("/students", (req, res) => {
-    studentSchema
+// Get All teachers
+router.get("/teachers", (req, res) => {
+    teacherSchema
         .find()
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 });
 
-// Get student by ID ( PathVariable )
-router.get("/students/:id", (req, res) => {
+// Get teacher by ID ( PathVariable )
+router.get("/teachers/:id", (req, res) => {
     const {id} = req.params;
-    studentSchema
+    teacherSchema
         .findById(id)
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 });
 
-// Get student by Email
-router.get("/students/email/:email", (req, res) => {
+// Get teacher by Email
+router.get("/teachers/email/:email", (req, res) => {
     const {email} = req.params;
-    studentSchema
+    teacherSchema
         .find({email})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 });
 
-// Get student by phone
-router.get("/students/phone/:phone", (req, res) => {
+// Get teacher by phone
+router.get("/teachers/phone/:phone", (req, res) => {
     const {phone} = req.params;
-    studentSchema
+    teacherSchema
         .find({phone})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 });
 
-// Update student by ID ( PathVariable )
-router.put("/students/:id", (req, res) => {
+// Update teacher by ID ( PathVariable )
+router.put("/teachers/:id", (req, res) => {
     const {id} = req.params;
     const {firstName, lastName, email, phone, education} = req.body;
-    studentSchema
+    teacherSchema
         .updateOne(
             {_id: id},
             {$set: {firstName, lastName, email, phone, education}}
@@ -61,21 +61,21 @@ router.put("/students/:id", (req, res) => {
         .catch((err) => res.json(err));
 });
 
-// Update student password by id, email and password
-router.put("/students/password/:id/:email/:password", (req, res) => {
+// Update teacher password by id, email and password
+router.put("/teachers/password/:id/:email/:password", (req, res) => {
     const {id, email, password} = req.params;
     const {newPassword} = req.body;
-    studentSchema
+    teacherSchema
         .updateOne({_id: id, email , password}, {$set: {password: newPassword}})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 
 });
 
-// Delete student by ID ( PathVariable )
-router.delete("/students/:id", (req, res) => {
+// Delete teacher by ID ( PathVariable )
+router.delete("/teachers/:id", (req, res) => {
     const {id} = req.params;
-    studentSchema
+    teacherSchema
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));

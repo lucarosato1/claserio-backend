@@ -11,10 +11,12 @@ app.use(cors());
 
 // Endpoints
 const studentRoutes = require('./route/student');
+const teacherRoutes = require('./route/teacher');
 
 // Middleware
 app.use(express.json());
 app.use("/api/v1", studentRoutes);
+app.use("/api/v1", teacherRoutes);
 
 // routes
 app.get("/test", (req, res) => {
