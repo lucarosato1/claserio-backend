@@ -21,7 +21,7 @@ const classSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    classSuject:{
+    classSubject:{
         type: String,
         required: true,
         //enum: true
