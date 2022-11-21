@@ -1,8 +1,8 @@
 const classSchema = require("../model/class");
 
 const createClass = (req, res) => {
-    const student = classSchema(req.body);
-    student
+    const classSchema = classSchema(req.body);
+    classSchema
         .save()
         .then((data) => res.json(data))
         .catch((err) => res.json(err));

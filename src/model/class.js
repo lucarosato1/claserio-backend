@@ -40,11 +40,11 @@ const classSchema = new mongoose.Schema({
         type: String,
         required: true,
         //enum: true
-    }/*,
-    comments:[{
-        type:mongoose.ObjectId,
-        ref:Comment
-    }]*/
+    },
+//    classComments:[{
+//        type:mongoose.ObjectId,
+//        ref:Comment
+//    }]
 });
 
 module.exports = mongoose.model('Class', classSchema);
