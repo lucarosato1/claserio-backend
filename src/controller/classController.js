@@ -25,11 +25,11 @@ const getClassById = (req, res) => {
 
 const updateClassById = (req, res) => {
     const { id } = req.params;
-    const { className, classDescription, classDuration, classType, classFrequency, classSubject, classPrice, classState } = req.body;
+    const { name, description, duration, type, frequency, subject, price, state } = req.body;
     classSchema
         .updateOne(
             {_id: id},
-            {$set: { className, classDescription, classDuration, classType, classFrequency, classSubject, classPrice, classState }}
+            {$set: { name, description, duration, type, frequency, subject, price, state }}
         )
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
