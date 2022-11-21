@@ -1,83 +1,29 @@
 const express = require("express");
 const router = express.Router();
-
-// Import student
-const studentSchema = require("../model/student");
+const studentController = require("../controller/studentController");
 
 // Create student
-router.post("/students", (req, res) => {
-    const student = studentSchema(req.body);
-    student
-        .save()
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.post("/students", studentController.create_student);
 
 // Get All students
-router.get("/students", (req, res) => {
-    studentSchema
-        .find()
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.get("/students",  studentController.get_all_students);
 
 // Get student by ID ( PathVariable )
-router.get("/students/:id", (req, res) => {
-    const {id} = req.params;
-    studentSchema
-        .findById(id)
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.get("/students/:id", studentController.get_student_by_id);
 
 // Get student by Email
-router.get("/students/email/:email", (req, res) => {
-    const {email} = req.params;
-    studentSchema
-        .find({email})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.get("/students/email/:email", studentController.get_student_by_email);
 
 // Get student by phone
-router.get("/students/phone/:phone", (req, res) => {
-    const {phone} = req.params;
-    studentSchema
-        .find({phone})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.get("/students/phone/:phone", studentController.get_student_by_phone);
 
 // Update student by ID ( PathVariable )
-router.put("/students/:id", (req, res) => {
-    const {id} = req.params;
-    const {firstName, lastName, email, phone, education} = req.body;
-    studentSchema
-        .updateOne(
-            {_id: id},
-            {$set: {firstName, lastName, email, phone, education}}
-        )
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.put("/students/:id", studentController.update_student_by_id);
 
 // Update student password by id, email and password
-router.put("/students/password/:id/:email/:password", (req, res) => {
-    const {id, email, password} = req.params;
-    const {newPassword} = req.body;
-    studentSchema
-        .updateOne({_id: id, email , password}, {$set: {password: newPassword}})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-
-});
+router.put("/students/password/:id/:email/:password", studentController.update_student_password_by_id);
 
 // Delete student by ID ( PathVariable )
-router.delete("/students/:id", (req, res) => {
-    const {id} = req.params;
-    studentSchema
-        .remove({_id: id})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-});
+router.delete("/students/:id", studentController.delete_student_by_id);
+
 module.exports = router;
