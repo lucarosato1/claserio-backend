@@ -1,66 +1,72 @@
 const studentSchema = require("../model/student");
+const StudentService = require("../service/studentService");
 
-const create_student = (req, res) => {
-    const student = studentSchema(req.body);
-    student
-        .save()
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+const createStudent = async function (req, res){
+    console.log("Creating student...")
+    const Student = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        birthday: req.body.birthday,
+        email: req.body.email,
+        phone: req.body.phone,
+        education: req.body.education,
+        password: req.body.password
+    }
+
+    try{
+        const createdStudent = await StudentService.createStudent(Student);
+        return res.status(201).json({status: 201, data: createdStudent, message: "Successfully created student"});
+    } catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
 }
 
-const get_all_students = (req, res) => {
-    studentSchema
-        .find()
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+const getStudentById = (req, res) => {
+    try {
+        let student = StudentService.getStudentById(req.params.id);
+        return res.status(200).json({status: 200, data: student, message: "Successfully got student by id"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
 }
 
-const get_student_by_id = (req, res) => {
-    const {id} = req.params;
-    studentSchema
-        .findById(id)
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+const getStudentByEmail = (req, res) => {
+    try{
+        let student = StudentService.getStudentByEmail(req.params.email);
+        return res.status(200).json({status: 200, data: student, message: "Successfully got student by email"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
 }
 
-const get_student_by_email = (req, res) => {
-    const {email} = req.params;
-    studentSchema
-        .find({email})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+const getStudentByPhone = (req, res) => {
+    try{
+        let student = StudentService.getStudentByPhone(req.params.phone);
+        return res.status(200).json({status: 200, data: student, message: "Successfully got student by phone"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
 }
 
-const get_student_by_phone = (req, res) => {
-    const {phone} = req.params;
-    studentSchema
-        .find({phone})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+
+const updateStudentPasswordById = (req, res) => {
+    try {
+        let student = StudentService.updateStudentPasswordById(req.params.id, req.params.password, req.body);
+        return res.status(200).json({status: 200, data: student, message: "Successfully updated student password by id"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+const updateStudentById = (req, res) => {
+    try {
+        let student = StudentService.updateStudentById(req.params.id, req.body);
+        return res.status(200).json({status: 200, data: student, message: "Successfully updated student by id"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
 }
 
-const update_student_by_id = (req, res) => {
-    const {id} = req.params;
-    const {firstName, lastName, email, phone, education} = req.body;
-    studentSchema
-        .updateOne(
-            {_id: id},
-            {$set: {firstName, lastName, email, phone, education}}
-        )
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-}
-
-const update_student_password_by_id = (req, res) => {
-    const {id, email, password} = req.params;
-    const {newPassword} = req.body;
-    studentSchema
-        .updateOne({_id: id, email , password}, {$set: {password: newPassword}})
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
-}
-
-const delete_student_by_id = (req, res) => {
+const deleteStudentById = (req, res) => {
     const {id} = req.params;
     studentSchema
         .remove({_id: id})
@@ -69,12 +75,11 @@ const delete_student_by_id = (req, res) => {
 }
 
 module.exports = {
-    create_student,
-    get_all_students,
-    get_student_by_id,
-    get_student_by_email,
-    get_student_by_phone,
-    update_student_by_id,
-    update_student_password_by_id,
-    delete_student_by_id
+    createStudent,
+    getStudentById,
+    getStudentByEmail,
+    getStudentByPhone,
+    updateStudentById,
+    updateStudentPasswordById,
+    deleteStudentById
 }
