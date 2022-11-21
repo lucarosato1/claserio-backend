@@ -13,12 +13,14 @@ app.use(cors());
 const studentRoutes = require('./route/student');
 const teacherRoutes = require('./route/teacher');
 const classRoutes = require('./route/class');
+const reserveRoutes = require('./route/reserve');
 
 // Middleware
 app.use(express.json());
 app.use("/api/v1", studentRoutes);
 app.use("/api/v1", teacherRoutes);
 app.use("/api/v1", classRoutes);
+app.use("/api/v1", reserveRoutes);
 
 // routes
 app.get("/test", (req, res) => {
