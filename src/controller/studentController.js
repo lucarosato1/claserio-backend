@@ -1,6 +1,6 @@
 const studentSchema = require("../model/student");
 
-const create_student = (req, res) => {
+const createStudent = (req, res) => {
     const student = studentSchema(req.body);
     student
         .save()
@@ -8,14 +8,14 @@ const create_student = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const get_all_students = (req, res) => {
+const getAllStudents = (req, res) => {
     studentSchema
         .find()
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 }
 
-const get_student_by_id = (req, res) => {
+const getStudentById = (req, res) => {
     const {id} = req.params;
     studentSchema
         .findById(id)
@@ -23,7 +23,7 @@ const get_student_by_id = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const get_student_by_email = (req, res) => {
+const getStudentByEmail = (req, res) => {
     const {email} = req.params;
     studentSchema
         .find({email})
@@ -31,7 +31,7 @@ const get_student_by_email = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const get_student_by_phone = (req, res) => {
+const getStudentByPhone = (req, res) => {
     const {phone} = req.params;
     studentSchema
         .find({phone})
@@ -39,7 +39,7 @@ const get_student_by_phone = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const update_student_by_id = (req, res) => {
+const updateStudentById = (req, res) => {
     const {id} = req.params;
     const {firstName, lastName, email, phone, education} = req.body;
     studentSchema
@@ -51,7 +51,7 @@ const update_student_by_id = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const update_student_password_by_id = (req, res) => {
+const updateStudentPasswordById = (req, res) => {
     const {id, email, password} = req.params;
     const {newPassword} = req.body;
     studentSchema
@@ -60,7 +60,7 @@ const update_student_password_by_id = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const delete_student_by_id = (req, res) => {
+const deleteStudentById = (req, res) => {
     const {id} = req.params;
     studentSchema
         .remove({_id: id})
@@ -69,12 +69,12 @@ const delete_student_by_id = (req, res) => {
 }
 
 module.exports = {
-    create_student,
-    get_all_students,
-    get_student_by_id,
-    get_student_by_email,
-    get_student_by_phone,
-    update_student_by_id,
-    update_student_password_by_id,
-    delete_student_by_id
+    createStudent,
+    getAllStudents,
+    getStudentById,
+    getStudentByEmail,
+    getStudentByPhone,
+    updateStudentById,
+    updateStudentPasswordById,
+    deleteStudentById
 }

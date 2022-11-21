@@ -3,27 +3,27 @@ const router = express.Router();
 const studentController = require("../controller/studentController");
 
 // Create student
-router.post("/students", studentController.create_student);
+router.post("/students", studentController.createStudent);
 
 // Get All students
-router.get("/students",  studentController.get_all_students);
+router.get("/students",  studentController.getAllStudents);
 
 // Get student by ID ( PathVariable )
-router.get("/students/:id", studentController.get_student_by_id);
+router.get("/students/:id", studentController.getStudentById);
 
 // Get student by Email
-router.get("/students/email/:email", studentController.get_student_by_email);
+router.get("/students/email/:email", studentController.getStudentByEmail);
 
 // Get student by phone
-router.get("/students/phone/:phone", studentController.get_student_by_phone);
+router.get("/students/phone/:phone", studentController.getStudentByPhone);
 
 // Update student by ID ( PathVariable )
-router.put("/students/:id", studentController.update_student_by_id);
+router.put("/students/:id", studentController.updateStudentById);
 
 // Update student password by id, email and password
-router.put("/students/password/:id/:email/:password", studentController.update_student_password_by_id);
+router.put("/students/password/:id/:email/:password", studentController.updateStudentPasswordById);
 
 // Delete student by ID ( PathVariable )
-router.delete("/students/:id", studentController.delete_student_by_id);
+router.delete("/students/:id", studentController.deleteStudentById);
 
 module.exports = router;
