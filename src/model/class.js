@@ -1,44 +1,50 @@
 const mongoose = require("mongoose")
 
 const classSchema = new mongoose.Schema({
-    className:{
+    name:{
         type: String,
         required: true
     },
-    classDescription:{
+    description:{
         type: String,
         required: false
     },
-    classDuration:{
+    duration:{
         type: String,
         required: true
     },
-    classType:{
+    type:{
         type: String,
-        required: true
+        required: true,
+        enum:['individual', 'grupal']
     },
-    classFrequency:{
+    frequency:{
         type: String,
-        required: true
+        required: true,
+        enum:['única', 'semanal', 'mensual']
     },
-    classSubject:{
+    subject:{
         type: String,
         required: true,
         //enum: true
     },
-    classPrice:{
+    price:{
         type: Number,
         required: true
     },
-    classTeacher:{
+    teacher:{
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    classState:{
+    state:{
         type: String,
         required: true,
         //enum: true
-    }
+    }/*,
+    comments:[{
+        type:mongoose.ObjectId,
+        ref:Comment
+    }]*/
 });
 
 module.exports = mongoose.model('Class', classSchema);
