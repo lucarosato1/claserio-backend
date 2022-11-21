@@ -16,17 +16,17 @@ const classSchema = new mongoose.Schema({
     type:{
         type: String,
         required: true,
-        enum:['individual', 'grupal']
+        enum: ['individual', 'group']
     },
     frequency:{
         type: String,
         required: true,
-        enum:['única', 'semanal', 'mensual']
+        enum:['daily', 'weekly', 'monthly']
     },
     subject:{
         type: String,
         required: true,
-        //enum: true
+        enum:['math', 'science', 'history', 'english', 'spanish', 'art', 'music', 'technology', 'other']
     },
     price:{
         type: Number,
@@ -35,16 +35,7 @@ const classSchema = new mongoose.Schema({
     teacher:{
         type: mongoose.Schema.Types.ObjectId,
         required: true
-    },
-    state:{
-        type: String,
-        required: true,
-        //enum: true
-    },
-//    classComments:[{
-//        type:mongoose.ObjectId,
-//        ref:Comment
-//    }]
+    }
 });
 
 module.exports = mongoose.model('Class', classSchema);
