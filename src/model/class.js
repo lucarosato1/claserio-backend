@@ -15,11 +15,13 @@ const classSchema = new mongoose.Schema({
     },
     classType:{
         type: String,
-        required: true
+        required: true,
+        enum:['individual', 'grupal']
     },
     classFrequency:{
         type: String,
-        required: true
+        required: true,
+        enum:['única', 'semanal', 'mensual']
     },
     classSubject:{
         type: String,
@@ -38,7 +40,11 @@ const classSchema = new mongoose.Schema({
         type: String,
         required: true,
         //enum: true
-    }
+    },
+    classComments:[{
+        type:mongoose.ObjectId,
+        ref:Comment
+    }]
 });
 
 module.exports = mongoose.model('Class', classSchema);
