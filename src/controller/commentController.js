@@ -15,7 +15,7 @@ exports.createComment = async function (req, res){
 
 exports.getCommentById = (req, res) => {
     try {
-        let comment = StudentService.getCommentById(req.params.id);
+        let comment = StudentService.getCommentById(req.params.classId);
         return res.status(200).json({status: 200, data: comment, message: "Successfully got comment by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});

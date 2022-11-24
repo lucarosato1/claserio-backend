@@ -16,9 +16,9 @@ exports.createClass = async function (Class) {
 
     try {
         // Saving the Student
-        let savedStudent = await newStudent.save();
+        let savedClass = await newClass.save();
         return jwt.sign({
-            id: savedStudent._id
+            id: savedClass._id
         }, process.env.SECRET, {
             expiresIn: 86400 // expires in 24 hours
         });
