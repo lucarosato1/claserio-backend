@@ -1,7 +1,7 @@
 const commentSchema = require("../model/comment");
 const commentService = require("../service/commentService");
 
-const createComment = async function (req, res){
+exports.createComment = async function (req, res){
     console.log("Creating comment...")
     
     const comment = req.body;
@@ -13,7 +13,7 @@ const createComment = async function (req, res){
     }
 }
 
-const getCommentById = (req, res) => {
+exports.getCommentById = (req, res) => {
     try {
         let comment = StudentService.getCommentById(req.params.id);
         return res.status(200).json({status: 200, data: comment, message: "Successfully got comment by id"});
@@ -22,12 +22,16 @@ const getCommentById = (req, res) => {
     }
 }
 
-const getCommentsByClass = (req, res) => {
+exports.getCommentsByClass = async function (req, res){
+    // Check the existence of the query parameters, If doesn't exists assign a default value
+    var page = req.query.page ? req.query.page : 1
+    var limit = req.query.limit ? req.query.limit : 10;
     try {
-        let comments = StudentService.getCommentsByClass(req.params.classId);
-        commentSchema.find(req.params.classId);
-        return res.status(200).json({status: 200, data: comments, message: "Successfully got comment by id"});
+        var Comments = await commentService.getCommentsByClass({}, page, limit)
+        // Return the Users list with the appropriate HTTP password Code and Message.
+        return res.status(200).json({status: 200, data: Comments, message: "Succesfully Users Recieved"});
     } catch (e) {
+        //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message});
     }
 }

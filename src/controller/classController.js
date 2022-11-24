@@ -1,7 +1,7 @@
 const classSchema = require("../model/class");
 const classService = require("../service/classService");
 
-const createClass = async function (req, res){
+exports.createClass = async function (req, res){
     console.log("Creating class...")
 
     const newClass = classSchema(req.body);
@@ -28,7 +28,7 @@ exports.getAllClasses = async function (req, res){
     }
 }
 
-const getClassById = (req, res) => {
+exports.getClassById = (req, res) => {
     const {id} = req.params;
     classSchema
         .findById(id)
@@ -36,7 +36,7 @@ const getClassById = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const updateClassById = (req, res) => {
+exports.updateClassById = (req, res) => {
     const { id } = req.params;
     const { name, description, duration, type, frequency, subject, price, state } = req.body;
     classSchema
@@ -48,18 +48,10 @@ const updateClassById = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-const deleteClassById = (req, res) => {
+exports.deleteClassById = (req, res) => {
     const {id} = req.params;
     classSchema
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
-}
-
-module.exports = {
-    createClass,
-    getAllClasses,
-    getClassById,
-    updateClassById,
-    deleteClassById
 }
