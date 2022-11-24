@@ -1,10 +1,9 @@
-const teacher = require("../model/teacher");
 const teacherSchema = require("../model/teacher");
 const teacherService = require("../service/teacherService");
 
 const createTeacher = async function (req, res){
-    console.log("Creating student...")
-    const Student = {
+    console.log("Creating teacher...")
+    const Teacher = {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         birthday: req.body.birthday,
@@ -15,7 +14,7 @@ const createTeacher = async function (req, res){
     }
 
     try{
-        const createdTeacher = await teacherService.createTeacher(teacher);
+        const createdTeacher = await teacherService.createTeacher(Teacher);
         return res.status(201).json({status: 201, data: createdTeacher, message: "Successfully created teacher"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});
@@ -24,8 +23,8 @@ const createTeacher = async function (req, res){
 
 const getTeacherById = (req, res) => {
     try {
-        let student = teacherService.getTeacherById(req.params.id);
-        return res.status(200).json({status: 200, data: student, message: "Successfully got teacher by id"});
+        let teacher = teacherService.getTeacherById(req.params.id);
+        return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
@@ -33,17 +32,17 @@ const getTeacherById = (req, res) => {
 
 const getTeacherByEmail = (req, res) => {
     try{
-        let student = teacherService.getTeacherByEmail(req.params.email);
-        return res.status(200).json({status: 200, data: student, message: "Successfully got teacher by email"});
+        let teacher = teacherService.getTeacherByEmail(req.params.email);
+        return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by email"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const getStudentByPhone = (req, res) => {
+const getTeacherByPhone = (req, res) => {
     try{
-        let student = StudentService.getStudentByPhone(req.params.phone);
-        return res.status(200).json({status: 200, data: student, message: "Successfully got student by phone"});
+        let teacher = teacherService.getTeacherByPhone(req.params.phone);
+        return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by phone"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
@@ -59,8 +58,8 @@ const updateTeacherPasswordById = (req, res) => {
 }
 const updateTeacherById = (req, res) => {
     try {
-        let student = teacherService.updateTeacherById(req.params.id, req.body);
-        return res.status(200).json({status: 200, data: student, message: "Successfully updated student by id"});
+        let teacher = teacherService.updateTeacherById(req.params.id, req.body);
+        return res.status(200).json({status: 200, data: teacher, message: "Successfully updated teacher by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
@@ -78,7 +77,7 @@ module.exports = {
     createTeacher,
     getTeacherById,
     getTeacherByEmail,
-    getStudentByPhone,
+    getTeacherByPhone,
     updateTeacherById,
     updateTeacherPasswordById,
     deleteTeacherById
