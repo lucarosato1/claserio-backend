@@ -1,11 +1,19 @@
 const classSchema = require("../model/class");
+const classService = require("../service/classService");
 
-const createClass = (req, res) => {
+const createClass = async function (req, res){
+    console.log("Creating class...")
+    const Class = {
+        
+    }
     const classSchema = classSchema(req.body);
-    classSchema
-        .save()
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+    try{
+        const createdStudent = await StudentService.createStudent(Student);
+        return res.status(201).json({status: 201, data: createdStudent, message: "Successfully created student"});
+    } catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
+
 }
 
 const getAllClasses = (req, res) => {
@@ -41,4 +49,12 @@ const deleteClassById = (req, res) => {
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
+}
+
+module.exports = {
+    createClass,
+    getAllClasses,
+    getClassById,
+    updateClassById,
+    deleteClassById
 }
