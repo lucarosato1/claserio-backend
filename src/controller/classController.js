@@ -15,15 +15,12 @@ exports.createClass = async function (req, res){
 }
 
 exports.getAllClasses = async function (req, res){
-    // Check the existence of the query parameters, If doesn't exists assign a default value
-    var page = req.query.page ? req.query.page : 1
-    var limit = req.query.limit ? req.query.limit : 10;
+    const page = req.query.page ? req.query.page : 1
+    const limit = req.query.limit ? req.query.limit : 10;
     try {
-        var Users = await UserService.getUsers({}, page, limit)
-        // Return the Users list with the appropriate HTTP password Code and Message.
-        return res.status(200).json({status: 200, data: Users, message: "Succesfully Users Recieved"});
+        const classes = await classService.getAllClasses({}, page, limit);
+        return res.status(200).json({status: 200, data: classes, message: "Succesfully Classes Returned"});
     } catch (e) {
-        //Return an Error Response Message with Code and the Error Message.
         return res.status(400).json({status: 400, message: e.message});
     }
 }
