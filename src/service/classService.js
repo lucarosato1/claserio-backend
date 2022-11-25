@@ -1,21 +1,24 @@
 // Getting the Newly created Mongoose Model we just created
 const Class = require("../model/class");
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-exports.createClass = async function (Class) {
-    let newClass = new ClassToSave({
-        name: ClassToSave.name,
-        lastName: student.lastName,
-        birthday: student.birthday,
-        email: student.email,
-        phone: student.phone,
-        education: student.education,
-        password: hashedPassword
+// Saving the context of this module inside the _the variable
+_this = this;
+
+exports.createClass = async function (classParam) {
+    let newClass = new Class({
+        name: classParam.name,
+        description: classParam.description,
+        duration: classParam.duration,
+        type: classParam.type,
+        frequency: classParam.frequency,
+        subject: classParam.subject,
+        price: classParam.price,
+        teacher: classParam.teacher
     })
 
     try {
-        // Saving the Student
+        // Saving the Class
         let savedClass = await newClass.save();
         return jwt.sign({
             id: savedClass._id
@@ -25,27 +28,32 @@ exports.createClass = async function (Class) {
     } catch (e) {
         // return an Error message describing the reason
         console.log(e)
-        throw Error("Error while Creating Student")
+        throw Error("Error while Creating Classes")
     }
 }
 
 exports.getAllClasses = async function (query, page, limit) {
-
-    // Options setup for the mongoose paginate
-    var options = {
-        page,
-        limit
-    }
-    // Try Catch the awaited promise to handle the error 
     try {
-        console.log("Query",query)
-        var Classes = await Class.paginate(query, options)
-        // Return the Userd list that was retured by the mongoose promise
-        return Classes;
-
+        const classes = await Class.find(query)
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+        const count = Class.countDocuments
+        return {
+            classes,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        };
     } catch (e) {
-        // return a Error message describing the reason 
-        console.log("error services",e)
-        throw Error('Error while Paginating Classes');
+        throw Error("Error while getting classes")
+    }
+}
+
+// find a class by id
+exports.getClassById = async function (id) {
+    try {
+        return await Class.findById(id);
+    } catch (e) {
+        throw Error("Error while getting class by id")
     }
 }
