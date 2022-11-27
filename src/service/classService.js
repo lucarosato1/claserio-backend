@@ -14,7 +14,8 @@ exports.createClass = async function (classParam) {
         frequency: classParam.frequency,
         subject: classParam.subject,
         price: classParam.price,
-        teacher: classParam.teacher
+        teacherId: classParam.teacherId,
+        image: classParam.image
     })
 
     try {
