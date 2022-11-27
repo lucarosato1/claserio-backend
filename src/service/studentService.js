@@ -79,14 +79,13 @@ exports.updateStudentPasswordById = async function (id, password, newPassword) {
 }
 
 exports.updateStudentById = async function (id, student) {
-    try{
+
         let oldStudent = await Student.findById(id);
         console.log("OldStudent: \n"+ JSON.stringify(oldStudent));
 
         if (oldStudent == null){
             return false;
         }
-
         oldStudent.firstName = student.firstName;
         oldStudent.lastName = student.lastName;
         oldStudent.phone = student.phone;
@@ -95,21 +94,16 @@ exports.updateStudentById = async function (id, student) {
 
         console.log("NewStudent: \n"+ JSON.stringify(oldStudent));
 
-        return await oldStudent.updateOne(
-            {_id: id},
-            {$set: {
+        return Student.updateOne({_id: id},
+            {
+                $set: {
                     firstName: student.firstName,
                     lastName: student.lastName,
                     phone: student.phone,
                     email: student.email,
                     education: student.education
                 }
-            })
-
-
-    } catch (e) {
-        throw Error("Error while updating student by id")
-    }
+            });
 }
 
 exports.deleteStudentById = async function (id) {
