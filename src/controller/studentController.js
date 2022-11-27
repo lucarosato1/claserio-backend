@@ -50,7 +50,14 @@ const getStudentByPhone = (req, res) => {
 }
 
 
-const updateStudentPasswordById = (req, res) => {
+const updateStudentPasswordByEmail = (req, res) => {
+    
+    let token = req.headers.authorization;
+    console.log("Token: " + token);
+    // get subject from token
+    let subject = jwt.decode(token, {complete: true}).payload.id;
+    console.log("UserId: " + subject);
+
     try {
         let student = StudentService.updateStudentPasswordById(req.params.id, req.params.password, req.body);
         return res.status(200).json({status: 200, data: student, message: "Successfully updated student password by id"});
@@ -60,11 +67,8 @@ const updateStudentPasswordById = (req, res) => {
 }
 
 const updateStudentById = (req, res) => {
-    let token = req.headers.authorization;
-    console.log("Token: " + token);
-    // get subject from token
-    let subject = jwt.decode(token, {complete: true}).payload.id;
-    console.log("UserId: " + subject);
+
+    let studentId = getStudentId(req, res);
 
     const newStudent = {
         firstName: req.body.firstName,
@@ -88,6 +92,16 @@ const deleteStudentById = (req, res) => {
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
+}
+
+const getStudentId = (req, res) => {
+    let token = req.headers.authorization;
+    console.log("Token: " + token);
+    // get subject from token
+    let subject = jwt.decode(token, {complete: true}).payload.id;
+    console.log("UserId: " + subject);
+
+    return subject;
 }
 
 module.exports = {
