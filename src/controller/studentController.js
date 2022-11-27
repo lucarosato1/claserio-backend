@@ -90,6 +90,21 @@ const deleteStudentById = (req, res) => {
         .catch((err) => res.json(err));
 }
 
+const loginStudent = async function (req, res){
+    console.log("Logging in student...")
+    const {email, password} = req.params;
+    try{
+        const token = await StudentService.loginStudent(email, password);
+        if (!token) {
+            return res.status(401).json({status: 401, message: "Invalid credentials"});
+        }
+        return res.status(200).json({status: 200, data: token, message: "Successfully logged in student"});
+    } 
+    catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 module.exports = {
     createStudent,
     getStudentById,
@@ -97,5 +112,6 @@ module.exports = {
     getStudentByPhone,
     updateStudentById,
     updateStudentPasswordById,
-    deleteStudentById
+    deleteStudentById,
+    loginStudent,
 }

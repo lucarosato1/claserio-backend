@@ -23,4 +23,7 @@ router.put("/students/password/:id/:password", studentController.updateStudentPa
 // Delete student by ID ( PathVariable )
 router.delete("/students/:id", studentController.deleteStudentById);
 
+// Login student
+router.get("/students/login/:email/:password", studentController.loginStudent);
+
 module.exports = router;
