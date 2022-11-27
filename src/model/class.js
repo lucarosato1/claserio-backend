@@ -7,7 +7,7 @@ const classSchema = new mongoose.Schema({
     },
     description:{
         type: String,
-        required: false
+        required: true
     },
     duration:{
         type: String,
@@ -17,6 +17,10 @@ const classSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['individual', 'group']
+    },
+    image:{
+        type: String,
+        required: true
     },
     frequency:{
         type: String,
@@ -32,9 +36,25 @@ const classSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    teacher:{
+    teacherId:{
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Teachers',
         required: true
+    },
+    rank:{
+        type: Number,
+        required: false,
+        default: 0
+    },
+    comments:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Comments',
+        required: false,
+    },
+    state:{
+        type: Boolean,
+        required: true,
+        default: true
     }
 });
 
