@@ -118,3 +118,20 @@ exports.deleteStudentById = async function (id) {
         throw Error("Error while deleting student by id")
     }
 }
+
+exports.loginStudent = async function (email, password) {
+    try {
+        let student = await Student.findOne({email});
+        if (!student) {
+            console.log("Student not found");
+            return false;
+        }
+        if (!bcrypt.compareSync(password, student.password)) {
+            console.log("Password not match");
+            return false;
+        }
+        return jwt.sign({ id: student._id }, process.env.SECRET, { expiresIn: 86400 });
+    } catch (e) {
+        throw Error("Error while getting student by email")
+    }
+}
