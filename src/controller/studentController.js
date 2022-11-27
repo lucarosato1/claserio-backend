@@ -1,5 +1,6 @@
 const studentSchema = require("../model/student");
 const StudentService = require("../service/studentService");
+const jwt = require("jsonwebtoken");
 
 const createStudent = async function (req, res){
     console.log("Creating student...")
@@ -57,9 +58,24 @@ const updateStudentPasswordById = (req, res) => {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
+
 const updateStudentById = (req, res) => {
+    let token = req.headers.authorization;
+    console.log("Token: " + token);
+    // get subject from token
+    let subject = jwt.decode(token, {complete: true}).payload.id;
+    console.log("UserId: " + subject);
+
+    const newStudent = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        birthday: req.body.birthday,
+        email: req.body.email,
+        phone: req.body.phone,
+        education: req.body.education}
+
     try {
-        let student = StudentService.updateStudentById(req.params.id, req.body);
+        let student = StudentService.updateStudentById(subject, newStudent);
         return res.status(200).json({status: 200, data: student, message: "Successfully updated student by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
