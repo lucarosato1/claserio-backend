@@ -6,7 +6,6 @@ const router = express.Router();
 
 //create class
 router.post('/class', classController.createClass);
-
 //get all classes
 router.get('/class', classController.getAllClasses);
 //get class by id
