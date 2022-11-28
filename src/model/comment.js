@@ -20,14 +20,15 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    rate:{
+    rank:{
         type: Number,
         required: true
     },
     state:{
         type: String,
-        required: true,
-        enum:['pending', 'approved', 'blocked']
+        required: false,
+        enum:['pending', 'approved', 'blocked'],
+        default: 'pending'
     },
     createdAt:{
         type: Date,

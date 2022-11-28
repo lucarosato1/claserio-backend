@@ -1,13 +1,24 @@
 // Getting the Newly created Mongoose Model we just created
-const Comments = require("../model/comment");
-const bcrypt = require('bcryptjs');
+const Comment = require("../model/comment");
 const jwt = require('jsonwebtoken');
+const Class = require("../model/class"); 
 
 exports.createComment = async function(comment){
-
+    let newComment = new Comment({
+        classId: comment.classId,
+        classOwnerId: comment.classOwnerId,
+        publisherId: comment.publisherId,
+        comment: comment.comment,
+        rank: comment.rank
+    });
     try {
         // Saving the Comment
         let savedComment = await newComment.save();
+        let addCommentToClass = await Class.findByIdAndUpdate(
+            comment.classId,
+            {$push: {comments: savedComment._id}},
+            {new: true}
+        );
         return jwt.sign({
             id: savedComment._id
         }, process.env.SECRET, {
