@@ -35,11 +35,11 @@ exports.getClassById = (req, res) => {
 
 exports.updateClassById = (req, res) => {
     const { id } = req.params;
-    const { name, description, duration, type, frequency, subject, price, state } = req.body;
+    const { name, description, duration, type, image, frequency, subject, price, state } = req.body;
     classSchema
         .updateOne(
             {_id: id},
-            {$set: { name, description, duration, type, frequency, subject, price, state }}
+            {$set: { name, description, duration, type, image, frequency, subject, price, state }}
         )
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
