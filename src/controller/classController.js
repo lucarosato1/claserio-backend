@@ -25,18 +25,18 @@ exports.getAllClasses = async function (req, res){
     }
 }
 
-exports.getClassById = (req, res) => {
+exports.getClassById = async function (req, res){
     const {id} = req.params;
-    classSchema
+    await classSchema
         .findById(id)
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 }
 
-exports.updateClassById = (req, res) => {
+exports.updateClassById = async function (req, res){
     const { id } = req.params;
     const { name, description, duration, type, image, frequency, subject, price, state } = req.body;
-    classSchema
+    await classSchema
         .updateOne(
             {_id: id},
             {$set: { name, description, duration, type, image, frequency, subject, price, state }}
@@ -45,9 +45,9 @@ exports.updateClassById = (req, res) => {
         .catch((err) => res.json(err));
 }
 
-exports.deleteClassById = (req, res) => {
+exports.deleteClassById = async function (req, res){
     const {id} = req.params;
-    classSchema
+    await classSchema
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));

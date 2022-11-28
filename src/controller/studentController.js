@@ -22,46 +22,44 @@ const createStudent = async function (req, res){
     }
 }
 
-const getStudentById = (req, res) => {
+const getStudentById = async function (req, res){
     try {
-        let student = StudentService.getStudentById(req.params.id);
+        let student = await StudentService.getStudentById(req.params.id);
         return res.status(200).json({status: 200, data: student, message: "Successfully got student by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const getStudentByEmail = (req, res) => {
+const getStudentByEmail = async function (req, res){
     try{
-        let student = StudentService.getStudentByEmail(req.params.email);
+        let student = await StudentService.getStudentByEmail(req.params.email);
         return res.status(200).json({status: 200, data: student, message: "Successfully got student by email"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const getStudentByPhone = (req, res) => {
+const getStudentByPhone = async function (req, res){
     try{
-        let student = StudentService.getStudentByPhone(req.params.phone);
+        let student = await StudentService.getStudentByPhone(req.params.phone);
         return res.status(200).json({status: 200, data: student, message: "Successfully got student by phone"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-
-const updateStudentPasswordById = (req, res) => {
+const updateStudentPasswordById = async function (req, res){
     try {
-        let student = StudentService.updateStudentPasswordById(req.params.id, req.params.password, req.body);
+        let student = await StudentService.updateStudentPasswordById(req.params.id, req.params.password, req.body);
         return res.status(200).json({status: 200, data: student, message: "Successfully updated student password by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const updateStudentById = (req, res) => {
+const updateStudentById = async function (req, res){
     let token = req.headers.authorization;
-    console.log("Token: " + token);
     // get subject from token
     let subject = jwt.decode(token, {complete: true}).payload.id;
     console.log("UserId: " + subject);
@@ -75,16 +73,16 @@ const updateStudentById = (req, res) => {
         education: req.body.education}
 
     try {
-        let student = StudentService.updateStudentById(subject, newStudent);
+        let student = await StudentService.updateStudentById(subject, newStudent);
         return res.status(200).json({status: 200, data: student, message: "Successfully updated student by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const deleteStudentById = (req, res) => {
+const deleteStudentById = async function (req, res){
     const {id} = req.params;
-    studentSchema
+    await studentSchema
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));

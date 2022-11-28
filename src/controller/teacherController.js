@@ -21,53 +21,54 @@ const createTeacher = async function (req, res){
     }
 }
 
-const getTeacherById = (req, res) => {
+const getTeacherById = async function (req, res){
     try {
-        let teacher = teacherService.getTeacherById(req.params.id);
+        let teacher = await teacherService.getTeacherById(req.params.id);
         return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const getTeacherByEmail = (req, res) => {
+const getTeacherByEmail = async function (req, res){
     try{
-        let teacher = teacherService.getTeacherByEmail(req.params.email);
+        let teacher = await teacherService.getTeacherByEmail(req.params.email);
         return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by email"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const getTeacherByPhone = (req, res) => {
+const getTeacherByPhone = async function (req, res){
     try{
-        let teacher = teacherService.getTeacherByPhone(req.params.phone);
+        let teacher = await teacherService.getTeacherByPhone(req.params.phone);
         return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by phone"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const updateTeacherPasswordById = (req, res) => {
+const updateTeacherPasswordById = async function (req, res){
     try {
-        let teacher = teacherService.updateTeacherPasswordById(req.params.id, req.params.password, req.body);
+        let teacher = await teacherService.updateTeacherPasswordById(req.params.id, req.params.password, req.body);
         return res.status(200).json({status: 200, data: teacher, message: "Successfully updated teacher password by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
-const updateTeacherById = (req, res) => {
+
+const updateTeacherById = async function (req, res){
     try {
-        let teacher = teacherService.updateTeacherById(req.params.id, req.body);
+        let teacher = await teacherService.updateTeacherById(req.params.id, req.body);
         return res.status(200).json({status: 200, data: teacher, message: "Successfully updated teacher by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
     }
 }
 
-const deleteTeacherById = (req, res) => {
+const deleteTeacherById = async function (req, res){
     const {id} = req.params;
-    teacherSchema
+    await teacherSchema
         .remove({_id: id})
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
