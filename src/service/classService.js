@@ -33,6 +33,48 @@ exports.createClass = async function (classParam) {
     }
 }
 
+//update class by id
+exports.updateClassById = async function (id, classParam) {
+    try {
+        //Find the old Class Object by the Id
+        var oldClass = await Class.findById(id);
+        console.log("OldStudent: \n"+ JSON.stringify(oldStudent));
+
+        if (oldClass == null){
+            return false;
+        }
+        oldClass.name = classParam.name;
+        oldClass.description = classParam.description;
+        oldClass.duration = classParam.duration;
+        oldClass.type = classParam.type;
+        oldClass.frequency = classParam.frequency;
+        oldClass.subject = classParam.subject;
+        oldClass.price = classParam.price;
+        oldClass.teacherId = classParam.teacherId;
+        oldClass.image = classParam.image;
+
+        console.log("NewClass: \n"+ JSON.stringify(oldClass));
+
+        return Class.updateOne({_id: id},
+            {
+                $set: {
+                    name: oldClass.name,
+                    description: oldClass.description,
+                    duration: oldClass.duration,
+                    type: oldClass.type,
+                    frequency: oldClass.frequency,
+                    subject: oldClass.subject,
+                    price: oldClass.price,
+                    teacherId: oldClass.teacherId,
+                    image: oldClass.image
+                }
+            });
+
+    } catch (e) {
+        throw Error("Error occured while Finding the Class")
+    }
+}
+
 exports.getAllClasses = async function (query, page, limit) {
     try {
         const classes = await Class.find(query)
