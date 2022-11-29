@@ -2,12 +2,14 @@ const Reserve = require('../model/reserve');
 const jwt = require('jsonwebtoken');
 const studentService = require('../service/studentService');
 const ClassService = require('../service/classService');
+const StudentService = require('../service/studentService');
 
 exports.createReserve = async function (reserve, tokenSubject) {
     let student = await studentService.getStudentById(tokenSubject);
     if(!student){throw Error("Student not found"); }
     let lesson = await ClassService.getClassById(reserve.classId);
     if(!lesson){throw Error("Lesson not found"); }
+
     let newReserve = new Reserve({
         classId: reserve.classId,
         studentId: tokenSubject,
@@ -20,6 +22,10 @@ exports.createReserve = async function (reserve, tokenSubject) {
         contactPhone: student.phone,
         message: reserve.message
     })
+    // validate if the class is already reserved
+    if (await Reserve.find({classId: reserve.classId, studentId: tokenSubject}).countDocuments() > 0){
+        throw Error("The class is already reserved");
+    }
 
     try {
         // Saving the Reserve
@@ -58,23 +64,16 @@ exports.getReservesByTeacherId = async function (query, page, limit) {
     }
 }
 
-exports.getReservesByStudentId = async function (query, page, limit) {
+exports.getReservesByStudentId = async function (studentId) {
+    console.log("Validating student...");
+    if (!await StudentService.getStudentById(studentId)){
+        console.log("Student not found");
+        throw Error("Student not found");
+    }
     try {
-        const reserves = await Reserve.find(query)
-        .limit(limit * 1)
-        .skip((page - 1) * limit)
-        .exec();
-        
-        const count = await Reserve.countDocuments;
-        // Return the Userd list that was retured by the mongoose promise
-        return {
-            reserves,
-            totalPages: Math.ceil(count / limit),
-            currentPage: page
-        };
-
+        console.log("Getting reserves...");
+        return await Reserve.find({studentId: studentId, status: 'requested'});
     } catch (e) {
-        // return a Error message describing the reason 
         throw Error('Error while Paginating Reserves');
     }
 }

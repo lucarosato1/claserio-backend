@@ -28,10 +28,17 @@ exports.getReservesByTeacherId = async function (req, res){
 }
 
 exports.getReservesByStudentId = async function (req, res){
-    const {studentId} = req.params.studentId;
-    console.log(studentId);
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+
     try{
-        const reserves = await reserveService.getReservesByStudentId(studentId);
+        const reserves = await reserveService.getReservesByStudentId(tokenSubject);
+        if (!reserves){
+            console.log("Reserves not found");
+            return res.status(404).json({status: 404, message: "Reserves not found"});
+        }
+        console.log("Reserves obtained successfully");
         return res.status(200).json({status: 200, data: reserves, message: "Successfully reserves retrieved"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});
