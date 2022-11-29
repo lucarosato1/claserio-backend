@@ -39,7 +39,7 @@ const classSchema = new mongoose.Schema({
     teacherId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Teachers',
-        required: true
+        required: false
     },
     rank:{
         type: Number,
