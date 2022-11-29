@@ -10,7 +10,7 @@ router.post('/reserve', reserveController.createReserve);
 router.get('/reserve/teacherId/:teacherId', reserveController.getReservesByTeacherId);
 
 //get all reserves by studentId
-router.get('/reserve/studentId/:studentId', reserveController.getReservesByStudentId);
+router.get('/reserve/studentId/', reserveController.getReservesByStudentId);
 
 //change status reserve
 router.put('/reserve/:id', reserveController.updateReserve);
