@@ -1,12 +1,18 @@
 const classSchema = require("../model/class");
 const classService = require("../service/classService");
+const jwt = require('jsonwebtoken');
 
 exports.createClass = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+    
     console.log("Creating class...")
 
     const newClass = classSchema(req.body);
     try{
-        const createdClass = await classService.createClass(newClass);
+        const createdClass = await classService.createClass(newClass, tokenSubject);
+        if (createdClass==null){ return res.status(401).json({status: 401, message: "Unauthorized"})}
         return res.status(201).json({status: 201, data: createdClass, message: "Successfully created class"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});
@@ -34,15 +40,21 @@ exports.getClassById = async function (req, res){
 }
 
 exports.updateClassById = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+    
     const { id } = req.params;
     const { name, description, duration, type, image, frequency, subject, price, state } = req.body;
-    await classSchema
-        .updateOne(
-            {_id: id},
-            {$set: { name, description, duration, type, image, frequency, subject, price, state }}
-        )
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+    const updateClass = { name, description, duration, type, image, frequency, subject, price, state, tokenSubject };
+    try{
+        const updatedClass = await classService.updateClassById(id, updateClass, tokenSubject);
+        if (updatedClass==null){ return res.status(401).json({status: 401, message: "Unauthorized"})}
+        return res.status(200).json({status: 200, data: updatedClass, message: "Successfully updated class"});
+    } catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
+
 }
 
 exports.deleteClassById = async function (req, res){

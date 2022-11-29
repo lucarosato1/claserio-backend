@@ -21,7 +21,24 @@ const reserveSchema = new mongoose.Schema({
         required: true,
         enum:['requested', 'accepted', 'canceled', 'finished'],
         default: 'requested'
-    }
+    },
+    timeRange:{
+        type: String,
+        required: true,
+        enum:['morning', 'afternoon', 'evening'],
+    },
+    contactMail:{
+        type: String,
+        required: true
+    },
+    contactPhone:{
+        type: String,
+        required: true
+    },
+    message:{
+        type: String,
+        required: true
+    },
 });
 
 module.exports = mongoose.model('Reserves', reserveSchema);

@@ -1,11 +1,16 @@
 // Getting the Newly created Mongoose Model we just created
 const Class = require("../model/class");
 const jwt = require('jsonwebtoken');
+const TeacherService = require('../service/teacherService');
 
 // Saving the context of this module inside the _the variable
 _this = this;
 
-exports.createClass = async function (classParam) {
+exports.createClass = async function (classParam, tokenSubject) {
+    let teacher = await TeacherService.getTeacherById(tokenSubject);
+
+    if(!teacher) { return null;}
+
     let newClass = new Class({
         name: classParam.name,
         description: classParam.description,
@@ -14,18 +19,13 @@ exports.createClass = async function (classParam) {
         frequency: classParam.frequency,
         subject: classParam.subject,
         price: classParam.price,
-        teacherId: classParam.teacherId,
+        teacherId: tokenSubject,
         image: classParam.image
     })
 
     try {
         // Saving the Class
-        let savedClass = await newClass.save();
-        return jwt.sign({
-            id: savedClass._id
-        }, process.env.SECRET, {
-            expiresIn: 86400 // expires in 24 hours
-        });
+        return await newClass.save();
     } catch (e) {
         // return an Error message describing the reason
         console.log(e)
@@ -34,12 +34,16 @@ exports.createClass = async function (classParam) {
 }
 
 //update class by id
-exports.updateClassById = async function (id, classParam) {
+exports.updateClassById = async function (id, classParam, tokenSubject) {
     try {
         //Find the old Class Object by the Id
         var oldClass = await Class.findById(id);
-        console.log("OldStudent: \n"+ JSON.stringify(oldStudent));
 
+        if(oldClass.teacherId != tokenSubject) {
+            console.log("You are not authorized to update this class");
+            return null;
+        }
+        console.log("auth ok");
         if (oldClass == null){
             return false;
         }

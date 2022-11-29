@@ -1,14 +1,20 @@
 const Reserve = require('../model/reserve');
 const jwt = require('jsonwebtoken');
+const studentService = require('../service/studentService');
 
 exports.createReserve = async function (reserve) {
+    let student = await studentService.getStudentById(reserve.studentId);
     let newReserve = new Reserve({
         classId: reserve.classId,
         studentId: reserve.studentId,
         teacherId: reserve.teacherId,
         date: reserve.date,
         time: reserve.time,
-        status: 'requested'
+        status: 'requested',
+        timeRange: reserve.timeRange,
+        contactMail: student.email,
+        contactPhone: student.phone,
+        message: reserve.message
     })
 
     try {
@@ -72,9 +78,7 @@ exports.getReservesByStudentId = async function (query, page, limit) {
 exports.updateReserve = async function (id, reserveParam) {
     try {
         //Find the old Reserve Object by the Id
-        console.log("id: " + id);
         var oldReserve = await Reserve.findById(id);
-        console.log("OldReserve: \n"+ JSON.stringify(oldReserve));
 
         if (oldReserve == null){
             return false;

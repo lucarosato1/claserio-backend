@@ -18,7 +18,8 @@ exports.createTeacher = async function (teacher) {
         email: teacher.email,
         phone: teacher.phone,
         education: teacher.education,
-        password: hashedPassword
+        password: hashedPassword,
+        title: teacher.title,
     })
 
     try {
@@ -107,5 +108,22 @@ exports.deleteTeacherById = async function (id) {
 
     } catch (e) {
         throw Error("Error while deleting teacher by id")
+    }
+}
+
+exports.loginTeacher = async function (email, password) {
+    try {
+        let teacher = await Teacher.findOne({email});
+        if (!teacher) {
+            console.log("Teacher not found");
+            return false;
+        }
+        if (!bcrypt.compareSync(password, teacher.password)) {
+            console.log("Password not match");
+            return false;
+        }
+        return jwt.sign({ id: teacher._id }, process.env.SECRET, { expiresIn: 86400 });
+    } catch (e) {
+        throw Error("Error while getting teacher by email")
     }
 }

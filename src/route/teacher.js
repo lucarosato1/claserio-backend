@@ -19,4 +19,8 @@ router.put("/teachers/password/:id/:email/:password", teacherController.updateTe
 
 // Delete teacher by ID ( PathVariable )
 router.delete("/teachers/:id", teacherController.deleteTeacherById);
+
+// Login teacher
+router.get("/teachers/login/:email/:password", teacherController.loginTeacher);
+
 module.exports = router;

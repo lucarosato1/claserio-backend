@@ -1,5 +1,6 @@
 const teacherSchema = require("../model/teacher");
 const teacherService = require("../service/teacherService");
+const jwt = require("jsonwebtoken");
 
 const createTeacher = async function (req, res){
     console.log("Creating teacher...")
@@ -10,7 +11,8 @@ const createTeacher = async function (req, res){
         email: req.body.email,
         phone: req.body.phone,
         education: req.body.education,
-        password: req.body.password
+        password: req.body.password,
+        title: req.body.title
     }
 
     try{
@@ -24,6 +26,7 @@ const createTeacher = async function (req, res){
 const getTeacherById = async function (req, res){
     try {
         let teacher = await teacherService.getTeacherById(req.params.id);
+        if (!teacher) { return res.status(404).json({status: 404, message: "Teacher not found"}); }
         return res.status(200).json({status: 200, data: teacher, message: "Successfully got teacher by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
@@ -74,6 +77,21 @@ const deleteTeacherById = async function (req, res){
         .catch((err) => res.json(err));
 }
 
+const loginTeacher = async function (req, res){
+    console.log("Logging in teacher...")
+    const {email, password} = req.params;
+    try{
+        const token = await teacherService.loginTeacher(email, password);
+        if (!token) {
+            return res.status(401).json({status: 401, message: "Invalid credentials"});
+        }
+        return res.status(200).json({status: 200, data: token, message: "Successfully logged in teacher"});
+    } 
+    catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 module.exports = {
     createTeacher,
     getTeacherById,
@@ -81,5 +99,6 @@ module.exports = {
     getTeacherByPhone,
     updateTeacherById,
     updateTeacherPasswordById,
-    deleteTeacherById
+    deleteTeacherById,
+    loginTeacher
 }
