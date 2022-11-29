@@ -1,10 +1,15 @@
 const reserveService = require('../service/reserveService');
+const jwt = require('jsonwebtoken');
 
 exports.createReserve = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+
     console.log("Creating reserve...")
     const reserve = req.body;
     try{
-        const createdReserve = await reserveService.createReserve(reserve);
+        const createdReserve = await reserveService.createReserve(reserve, tokenSubject);
         return res.status(201).json({status: 201, data: createdReserve, message: "Successfully created reserve"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});

@@ -1,13 +1,17 @@
 const Reserve = require('../model/reserve');
 const jwt = require('jsonwebtoken');
 const studentService = require('../service/studentService');
+const ClassService = require('../service/classService');
 
-exports.createReserve = async function (reserve) {
-    let student = await studentService.getStudentById(reserve.studentId);
+exports.createReserve = async function (reserve, tokenSubject) {
+    let student = await studentService.getStudentById(tokenSubject);
+    if(!student){throw Error("Student not found"); }
+    let lesson = await ClassService.getClassById(reserve.classId);
+    if(!lesson){throw Error("Lesson not found"); }
     let newReserve = new Reserve({
         classId: reserve.classId,
-        studentId: reserve.studentId,
-        teacherId: reserve.teacherId,
+        studentId: tokenSubject,
+        teacherId: lesson.teacherId,
         date: reserve.date,
         time: reserve.time,
         status: 'requested',
