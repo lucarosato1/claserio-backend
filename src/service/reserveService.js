@@ -1,11 +1,11 @@
 const Reserve = require('../model/reserve');
 const jwt = require('jsonwebtoken');
-const studentService = require('../service/studentService');
 const ClassService = require('../service/classService');
 const StudentService = require('../service/studentService');
+const TeacherService = require('../service/teacherService');
 
 exports.createReserve = async function (reserve, tokenSubject) {
-    let student = await studentService.getStudentById(tokenSubject);
+    let student = await StudentService.getStudentById(tokenSubject);
     if(!student){throw Error("Student not found"); }
     let lesson = await ClassService.getClassById(reserve.classId);
     if(!lesson){throw Error("Lesson not found"); }
@@ -78,7 +78,17 @@ exports.getReservesByStudentId = async function (studentId) {
     }
 }
 
-exports.updateReserve = async function (id, reserveParam) {
+exports.updateReserve = async function (id, reserveParam, tokenSubject) {
+    let reserve = await Reserve.findById(id);
+    console.log("tokenSubject: " + tokenSubject);
+    console.log("Reserve: \n"+ JSON.stringify(reserve));
+    let student = await StudentService.getStudentById(tokenSubject);
+    let teacher = await TeacherService.getTeacherById(tokenSubject);
+
+    if(student == null){student = await StudentService.getStudentById(reserve.studentId);}
+    if(teacher == null){teacher = await TeacherService.getTeacherById(reserve.teacherId);}
+    console.log("student: " + student, "\n teacher: " + teacher);
+    if(student._id != reserveParam.studentId || teacher._id != reserveParam.teacherId){throw Error("Not authorized"); }
     try {
         //Find the old Reserve Object by the Id
         var oldReserve = await Reserve.findById(id);
@@ -87,10 +97,83 @@ exports.updateReserve = async function (id, reserveParam) {
             return false;
         }
         oldReserve.state = reserveParam.state;
-
+        switch (reserveParam.state) {
+            case 'accepted': acceptReserve(oldReserve); break;
+            case 'canceled': cancelReserve(oldReserve); break;
+            case 'finished': finishReserve(oldReserve); break;
+        }
         console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
 
         return Reserve.updateOne({_id: id},
+            {   
+                $set: {
+                    state: oldReserve.state
+                }
+            });
+    } catch (e) {
+        throw Error("Error occured while Finding the Reserve")
+    }
+}
+
+var acceptReserve = async function (reserve) {
+    try {
+        //Find the old Reserve Object by the Id
+        var oldReserve = await Reserve.findById(reserve._id);
+
+        if (oldReserve == null){
+            return false;
+        }
+        oldReserve.state = 'accepted';
+
+        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
+
+        return Reserve.updateOne({_id: reserve._id},
+            {   
+                $set: {
+                    state: oldReserve.state
+                }
+            });
+    } catch (e) {
+        throw Error("Error occured while Finding the Reserve")
+    }
+}
+
+var cancelReserve = async function (reserve) {
+    try {
+        //Find the old Reserve Object by the Id
+        var oldReserve = await Reserve.findById(reserve._id);
+
+        if (oldReserve == null){
+            return false;
+        }
+        oldReserve.state = 'canceled';
+
+        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
+
+        return Reserve.updateOne({_id: reserve._id},
+            {   
+                $set: {
+                    state: oldReserve.state
+                }
+            });
+    } catch (e) {
+        throw Error("Error occured while Finding the Reserve")
+    }
+}
+
+var finishReserve = async function (reserve) {
+    try {
+        //Find the old Reserve Object by the Id
+        var oldReserve = await Reserve.findById(reserve._id);
+
+        if (oldReserve == null){
+            return false;
+        }
+        oldReserve.state = 'finished';
+
+        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
+
+        return Reserve.updateOne({_id: reserve._id},
             {   
                 $set: {
                     state: oldReserve.state

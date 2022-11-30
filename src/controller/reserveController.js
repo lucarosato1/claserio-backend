@@ -48,8 +48,10 @@ exports.getReservesByStudentId = async function (req, res){
 exports.updateReserve = async function (req, res){
     const id = req.params.id;
     const reserve = req.body;
+    let token = req.headers.authorization;
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
     try{
-        const updatedReserve = await reserveService.updateReserve(id, reserve);
+        const updatedReserve = await reserveService.updateReserve(id, reserve, tokenSubject);
         return res.status(200).json({status: 200, data: updatedReserve, message: "Successfully reserve updated"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});
