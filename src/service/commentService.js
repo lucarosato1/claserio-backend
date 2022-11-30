@@ -14,7 +14,7 @@ exports.createComment = async function (comment) {
   try {
     // Saving the Comment
     let savedComment = await newComment.save();
-    let addCommentToClass = await Class.findByIdAndUpdate(
+    await Class.findByIdAndUpdate(
       comment.classId,
       { $push: { comments: savedComment._id } },
       { new: true }
