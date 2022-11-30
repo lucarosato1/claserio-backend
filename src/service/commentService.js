@@ -3,9 +3,11 @@ const Comment = require("../model/comment");
 const jwt = require("jsonwebtoken");
 const Class = require("../model/class");
 const ClassService = require("../service/classService");
+const CommentService = require("../service/commentService");
 
 exports.createComment = async function (comment, tokenSubject) {
   let teacherId = await ClassService.getClassById(comment.classId).teacherId;
+  let commentsForClass = await Comment.find({ classId: comment.classId, state: "approved" });
   console.log("teacherId", teacherId);
   let newComment = new Comment({
     classId: comment.classId,
@@ -17,10 +19,15 @@ exports.createComment = async function (comment, tokenSubject) {
   try {
     // Saving the Comment
     let savedComment = await newComment.save();
+    let totalRank = 0;
+    commentsForClass.map((comment) => {
+      totalRank += comment.rank;
+    });
+    let avgRank = totalRank / commentsForClass.length;
     await Class.findByIdAndUpdate(
       comment.classId,
-      { $push: { comments: savedComment._id } },
-      { new: true }
+      { $push: { comments: savedComment._id }, rank: avgRank },
+
     );
     return savedComment;
   } catch (e) {
