@@ -12,7 +12,7 @@ router.put('/class/:id', classController.updateClassById);
 //delete class by id
 router.delete('/class/:id', classController.deleteClassById);
 //get all published classes
-router.get('/class/state/published', classController.getAllPublishedClasses);
+router.get('/class/student/state/published', classController.getAllPublishedClasses);
 // get all classes by reserve
 router.get('/class/student/reserve', classController.getClassesByStudentReserve);
 // get all classes by reserve approved
