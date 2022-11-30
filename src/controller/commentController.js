@@ -1,12 +1,13 @@
 const commentService = require("../service/commentService");
+const jwt = require('jsonwebtoken');
 
 exports.createComment = async function (req, res){
-    console.log("Creating comment...")
-    
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
     const comment = req.body;
-    
     try{
-        const createdComment = await commentService.createComment(comment);
+        const createdComment = await commentService.createComment(comment, tokenSubject);
         return res.status(201).json({status: 201, data: createdComment, message: "Successfully created comment"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});
@@ -59,7 +60,6 @@ exports.getPendingCommentsByClassId = async function (req, res){
 exports.updateCommentById = async function (req, res){
     const id = req.params.id;
     const comment = req.body;
-    console.log(comment);
     try{
         const updatedComment = await commentService.updateCommentById(id, comment);
         return res.status(200).json({status: 200, data: updatedComment, message: "Successfully comment updated"});

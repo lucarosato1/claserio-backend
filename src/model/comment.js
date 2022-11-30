@@ -9,7 +9,6 @@ const commentSchema = new mongoose.Schema({
     classOwnerId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Teacher",
-        required: true
     },
     classId:{
         type: mongoose.Schema.Types.ObjectId,

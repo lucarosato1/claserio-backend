@@ -90,3 +90,38 @@ exports.deleteClassById = async function (req, res){
         .then((data) => res.json(data))
         .catch((err) => res.json(err));
 }
+
+exports.getAllPublishedClasses = async function (req, res){
+    const page = req.query.page ? req.query.page : 1
+    const limit = req.query.limit ? req.query.limit : 10;
+    try {
+        const classes = await classService.getAllPublishedClasses({}, page, limit);
+        return res.status(200).json({status: 200, data: classes, message: "Succesfully Classes Returned"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
+exports.getAllPublishedClassesByTeacher = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+    try {
+        const classes = await classService.getAllPublishedClassesByTeacher(tokenSubject);
+        return res.status(200).json({status: 200, data: classes, message: "Succesfully Classes Returned"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
+exports.getAllUnpublishedClassesByTeacher = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+    try {
+        const classes = await classService.getAllUnpublishedClassesByTeacher(tokenSubject);
+        return res.status(200).json({status: 200, data: classes, message: "Succesfully Classes Returned"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}

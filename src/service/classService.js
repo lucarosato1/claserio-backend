@@ -143,3 +143,27 @@ exports.getClassById = async function (id) {
         throw Error("Error while getting class by id")
     }
 }
+
+exports.getAllPublishedClasses = async function (page, limit) {
+    try {
+        return await Class.find({state: true})
+    } catch (e) {
+        throw Error("Error while getting classes")
+    }
+}
+
+exports.getAllPublishedClassesByTeacher = async function (tokenSubject) {
+    try {
+        return await Class.find({state: true, teacherId: tokenSubject})
+    } catch (e) {
+        throw Error("Error while getting classes")
+    }
+}
+
+exports.getAllUnpublishedClassesByTeacher = async function (tokenSubject) {
+    try {
+        return await Class.find({state: false, teacherId: tokenSubject})
+    } catch (e) {
+        throw Error("Error while getting classes")
+    }
+}

@@ -2,12 +2,15 @@
 const Comment = require("../model/comment");
 const jwt = require("jsonwebtoken");
 const Class = require("../model/class");
+const ClassService = require("../service/classService");
 
-exports.createComment = async function (comment) {
+exports.createComment = async function (comment, tokenSubject ) {
+    let teacherId = await ClassService.getClassById(comment.classId).teacherId;
+    console.log("teacherId", teacherId);
   let newComment = new Comment({
     classId: comment.classId,
-    classOwnerId: comment.classOwnerId,
-    publisherId: comment.publisherId,
+    classOwnerId: teacherId,
+    publisherId: tokenSubject,
     comment: comment.comment,
     rank: comment.rank,
   });
@@ -19,15 +22,7 @@ exports.createComment = async function (comment) {
       { $push: { comments: savedComment._id } },
       { new: true }
     );
-    return jwt.sign(
-      {
-        id: savedComment._id,
-      },
-      process.env.SECRET,
-      {
-        expiresIn: 86400, // expires in 24 hours
-      }
-    );
+    return savedComment;
   } catch (e) {
     // return an Error message describing the reason
     console.log(e);
