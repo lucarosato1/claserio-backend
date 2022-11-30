@@ -33,10 +33,14 @@ exports.getAllClasses = async function (req, res){
 
 exports.getClassById = async function (req, res){
     const {id} = req.params;
-    await classSchema
-        .findById(id)
-        .then((data) => res.json(data))
-        .catch((err) => res.json(err));
+    try{
+    const classes = await classService.getClassById(id);
+    if (!classes) { return res.status(404).json({status: 404, message: "Class by id not found"})}
+        return res.status(200).json({status: 200, data: classes, message: "Succesfully Classes Returned"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+
 }
 
 exports.getClassesByStudentReserve = async function (req, res){
