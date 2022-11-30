@@ -4,9 +4,9 @@ const jwt = require("jsonwebtoken");
 const Class = require("../model/class");
 const ClassService = require("../service/classService");
 
-exports.createComment = async function (comment, tokenSubject ) {
-    let teacherId = await ClassService.getClassById(comment.classId).teacherId;
-    console.log("teacherId", teacherId);
+exports.createComment = async function (comment, tokenSubject) {
+  let teacherId = await ClassService.getClassById(comment.classId).teacherId;
+  console.log("teacherId", teacherId);
   let newComment = new Comment({
     classId: comment.classId,
     classOwnerId: teacherId,
