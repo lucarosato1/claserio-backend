@@ -39,6 +39,32 @@ exports.getClassById = async function (req, res){
         .catch((err) => res.json(err));
 }
 
+exports.getClassesByStudentReserve = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+
+    try{
+        const classes = await classService.getClassesByStudentReserve(tokenSubject);
+        return res.status(200).json({status: 200, data: classes, message: "Successfully getted classes by student reserve"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
+exports.getClassesByStudentReserveApproved = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+
+    try{
+        const classes = await classService.getClassesByStudentReserveApproved(tokenSubject);
+        return res.status(200).json({status: 200, data: classes, message: "Successfully getted classes by student reserve approved"});
+    } catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 exports.updateClassById = async function (req, res){
     let token = req.headers.authorization;
     // get subject from token

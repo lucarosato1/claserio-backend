@@ -1,7 +1,7 @@
 // Getting the Newly created Mongoose Model we just created
 const Class = require("../model/class");
-const jwt = require('jsonwebtoken');
 const TeacherService = require('../service/teacherService');
+const reserveService = require("./reserveService");
 
 // Saving the context of this module inside the _the variable
 _this = this;
@@ -35,18 +35,18 @@ exports.createClass = async function (classParam, tokenSubject) {
 
 //update class by id
 exports.updateClassById = async function (id, classParam, tokenSubject) {
-    try {
-        //Find the old Class Object by the Id
-        var oldClass = await Class.findById(id);
+    //Find the old Class Object by the Id
+    let oldClass = await Class.findById(id);
 
-        if(oldClass.teacherId != tokenSubject) {
-            console.log("You are not authorized to update this class");
-            return null;
-        }
-        console.log("auth ok");
-        if (oldClass == null){
-            return false;
-        }
+    if(oldClass.teacherId !== tokenSubject) {
+        throw Error("You are not authorized to update this class");
+    }
+
+    if (!oldClass){
+        throw Error("Class not found");
+    }
+
+    try {
         oldClass.name = classParam.name;
         oldClass.description = classParam.description;
         oldClass.duration = classParam.duration;
@@ -96,6 +96,45 @@ exports.getAllClasses = async function (query, page, limit) {
     }
 }
 
+exports.getClassesByStudentReserve = async function (tokenSubject) {
+    console.log("Getting reserves by student id...")
+    const reserves = await reserveService.getReservesByStudentId(tokenSubject);
+
+    console.log("Reserves: " + JSON.stringify(reserves));
+    let classes = [];
+
+    console.log("Getting classes by student reserve...")
+
+    try {
+        for (let i = 0; i < reserves.length; i++) {
+            console.log("Getted", i + 1, "classes...");
+            classes.push(await Class.findById(reserves[i].classId));
+        }
+        return classes;
+    } catch (e) {
+        throw Error("Error while getting classes by student reserve")
+    }
+}
+
+exports.getClassesByStudentReserveApproved = async function (tokenSubject) {
+    console.log("Getting reserves by student id...")
+    const reserves = await reserveService.getReservesApprovedByStudentId(tokenSubject);
+
+    console.log("Reserves: " + JSON.stringify(reserves));
+    let classes = [];
+
+    console.log("Getting classes by student reserve...")
+
+    try {
+        for (let i = 0; i < reserves.length; i++) {
+            console.log("Getted", i + 1, "classes...");
+            classes.push(await Class.findById(reserves[i].classId));
+        }
+        return classes;
+    } catch (e) {
+        throw Error("Error while getting classes by student reserve")
+    }
+}
 // find a class by id
 exports.getClassById = async function (id) {
     try {

@@ -72,9 +72,24 @@ exports.getReservesByStudentId = async function (studentId) {
     }
     try {
         console.log("Getting reserves...");
-        return await Reserve.find({studentId: studentId, status: 'requested'});
+        return await Reserve.find({studentId: studentId, state: 'requested'});
     } catch (e) {
-        throw Error('Error while Paginating Reserves');
+        throw Error('Error while retrieving reserves');
+    }
+}
+
+exports.getReservesApprovedByStudentId = async function (studentId) {
+    console.log("Validating student...");
+    if (!await StudentService.getStudentById(studentId)){
+        console.log("Student not found");
+        throw Error("Student not found");
+    }
+    console.log("Student found");
+    try {
+        console.log("Getting reserves...");
+        return await Reserve.find({studentId: studentId, state: 'approved'});
+    } catch (e) {
+        throw Error('Error while retrieving reserves');
     }
 }
 
@@ -85,13 +100,13 @@ exports.updateReserve = async function (id, reserveParam, tokenSubject) {
     let student = await StudentService.getStudentById(tokenSubject);
     let teacher = await TeacherService.getTeacherById(tokenSubject);
 
-    if(student == null){student = await StudentService.getStudentById(reserve.studentId);}
-    if(teacher == null){teacher = await TeacherService.getTeacherById(reserve.teacherId);}
+    if(!student){student = await StudentService.getStudentById(reserve.studentId);}
+    if(!teacher){teacher = await TeacherService.getTeacherById(reserve.teacherId);}
     console.log("student: " + student, "\n teacher: " + teacher);
-    if(student._id != reserveParam.studentId || teacher._id != reserveParam.teacherId){throw Error("Not authorized"); }
+    if(student._id !== reserveParam.studentId || teacher._id !== reserveParam.teacherId){throw Error("Not authorized"); }
     try {
         //Find the old Reserve Object by the Id
-        var oldReserve = await Reserve.findById(id);
+        let oldReserve = await Reserve.findById(id);
 
         if (oldReserve == null){
             return false;
@@ -115,10 +130,10 @@ exports.updateReserve = async function (id, reserveParam, tokenSubject) {
     }
 }
 
-var acceptReserve = async function (reserve) {
+const acceptReserve = async function (reserve) {
     try {
         //Find the old Reserve Object by the Id
-        var oldReserve = await Reserve.findById(reserve._id);
+        let oldReserve = await Reserve.findById(reserve._id);
 
         if (oldReserve == null){
             return false;
@@ -138,10 +153,10 @@ var acceptReserve = async function (reserve) {
     }
 }
 
-var cancelReserve = async function (reserve) {
+const cancelReserve = async function (reserve) {
     try {
         //Find the old Reserve Object by the Id
-        var oldReserve = await Reserve.findById(reserve._id);
+        let oldReserve = await Reserve.findById(reserve._id);
 
         if (oldReserve == null){
             return false;
@@ -161,10 +176,10 @@ var cancelReserve = async function (reserve) {
     }
 }
 
-var finishReserve = async function (reserve) {
+const finishReserve = async function (reserve) {
     try {
         //Find the old Reserve Object by the Id
-        var oldReserve = await Reserve.findById(reserve._id);
+        let oldReserve = await Reserve.findById(reserve._id);
 
         if (oldReserve == null){
             return false;

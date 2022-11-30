@@ -12,6 +12,9 @@ router.get('/reserve/teacherId/:teacherId', reserveController.getReservesByTeach
 //get all reserves by studentId
 router.get('/reserve/studentId/', reserveController.getReservesByStudentId);
 
+//get all reserves approved by studentId
+router.get('/reserve/studentId/approved', reserveController.getReservesApprovedByStudentId);
+
 //change status reserve
 router.put('/reserve/:id', reserveController.updateReserve);
 

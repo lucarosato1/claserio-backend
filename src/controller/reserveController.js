@@ -45,6 +45,24 @@ exports.getReservesByStudentId = async function (req, res){
     }    
 }
 
+exports.getReservesApprovedByStudentId = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+
+    try{
+        const reserves = await reserveService.getReservesApprovedByStudentId(tokenSubject);
+        if (!reserves){
+            console.log("Reserves not found");
+            return res.status(404).json({status: 404, message: "Reserves not found"});
+        }
+        console.log("Reserves obtained successfully");
+        return res.status(200).json({status: 200, data: reserves, message: "Successfully reserves retrieved"});
+    } catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 exports.updateReserve = async function (req, res){
     const id = req.params.id;
     const reserve = req.body;
