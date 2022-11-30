@@ -13,5 +13,9 @@ router.get('/class/:id', classController.getClassById);
 router.put('/class/:id', classController.updateClassById);
 //delete class by id
 router.delete('/class/:id', classController.deleteClassById);
+// get all classes by reserve
+router.get('/class/student/reserve', classController.getClassesByStudentReserve);
+// get all classes by reserve approved
+router.get('/class/student/reserve/approved', classController.getClassesByStudentReserveApproved);
 
 module.exports = router;
