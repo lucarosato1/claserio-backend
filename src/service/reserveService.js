@@ -67,7 +67,7 @@ exports.getReservesByTeacherId = async function (query, page, limit) {
 exports.getPendingReservesByTeacher = async function (teacherId) {
     // Try Catch the awaited promise to handle the error
     try {
-        return await Reserve.find({teacherId: teacherId, status: 'requested'});
+        return await Reserve.find({teacherId: teacherId, state: 'requested'});
     } catch (e) {
         throw Error("Error while getting reserves by teacher id");
     }
@@ -129,17 +129,35 @@ exports.getReservesApprovedByStudentId = async function (studentId) {
     }
 }
 
-exports.updateReserve = async function (id, reserveParam, tokenSubject) {
+exports.updateReserve = async function (id, state, tokenSubject) {
     let reserve = await Reserve.findById(id);
     console.log("tokenSubject: " + tokenSubject);
     console.log("Reserve: \n"+ JSON.stringify(reserve));
+
     let student = await StudentService.getStudentById(tokenSubject);
     let teacher = await TeacherService.getTeacherById(tokenSubject);
 
-    if(!student){student = await StudentService.getStudentById(reserve.studentId);}
-    if(!teacher){teacher = await TeacherService.getTeacherById(reserve.teacherId);}
-    console.log("student: " + student, "\n teacher: " + teacher);
-    if(student._id !== reserveParam.studentId || teacher._id !== reserveParam.teacherId){throw Error("Not authorized"); }
+    if (student){
+        console.log("Student case")
+        student = await StudentService.getStudentById(reserve.studentId);
+        console.log("Student in reserve...")
+        console.log("Student del reserve: " + reserve.studentId + "y es del type: " + typeof reserve.studentId);
+        console.log("Student: " + student._id + "y es del type: " + typeof(student._id))
+        if ( !student._id.equals(reserve.studentId) ){
+            console.log("Student not found");
+            throw Error("Student not authorized");
+        }
+        console.log("Student authorized")
+    } else {
+        console.log("Teacher case")
+        teacher = await TeacherService.getTeacherById(reserve.teacherId);
+        console.log("Teacher in reserve...")
+        if (!teacher._id.equals(reserve.teacherId)){
+            throw Error("Teacher not authorized");
+        }
+        console.log("Teacher authorized")
+    }
+
     try {
         //Find the old Reserve Object by the Id
         let oldReserve = await Reserve.findById(id);
@@ -147,11 +165,14 @@ exports.updateReserve = async function (id, reserveParam, tokenSubject) {
         if (oldReserve == null){
             return false;
         }
-        oldReserve.state = reserveParam.state;
-        switch (reserveParam.state) {
-            case 'accepted': acceptReserve(oldReserve); break;
-            case 'canceled': cancelReserve(oldReserve); break;
-            case 'finished': finishReserve(oldReserve); break;
+        oldReserve.state = state.state;
+        switch (state.state) {
+            case 'accepted': await acceptReserve(oldReserve);
+            break;
+            case 'canceled': await cancelReserve(oldReserve);
+            break;
+            case 'finished': await finishReserve(oldReserve);
+            break;
         }
         console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
 
