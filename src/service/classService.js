@@ -137,6 +137,7 @@ exports.getClassesByStudentReserveApproved = async function (tokenSubject) {
 }
 // find a class by id
 exports.getClassById = async function (id) {
+    console.log()
     try {
         return await Class.findById(id);
     } catch (e) {
