@@ -72,3 +72,18 @@ exports.updateCommentById = async function (req, res){
         return res.status(400).json({status: 400, message: e.message});
     }    
 }
+
+exports.rejectCommentById = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+
+    const id = req.params.id;
+    const newState = req.body;
+    try{
+        const updatedComment = await commentService.rejectCommentById(id, newState, tokenSubject);
+        return res.status(200).json({status: 200, data: updatedComment, message: "Successfully comment rejected"});
+    } catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }    
+}

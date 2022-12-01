@@ -21,4 +21,7 @@ router.get('/comment/pending/classId/:classId', commentController.getPendingComm
 //update comment by id
 router.put('/comment/:id', commentController.updateCommentById);
 
+//reject comment by id
+router.put('/comment/reject/:id', commentController.rejectCommentById);
+
 module.exports = router;

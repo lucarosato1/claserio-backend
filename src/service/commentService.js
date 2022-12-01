@@ -33,12 +33,18 @@ exports.createComment = async function (comment, tokenSubject) {
 
     let avgRank = totalRank / commentsForClass.length;
     avgRank = parseFloat(avgRank).toFixed(2);
-    console.log("totalRank", totalRank, "lenght", commentsForClass.length,"avgRank", avgRank);
-    await Class.findByIdAndUpdate(
-      comment.classId,
-      { rank: avgRank, $push: { comments: savedComment._id } },
-
+    console.log(
+      "totalRank",
+      totalRank,
+      "lenght",
+      commentsForClass.length,
+      "avgRank",
+      avgRank
     );
+    await Class.findByIdAndUpdate(comment.classId, {
+      rank: avgRank,
+      $push: { comments: savedComment._id },
+    });
     return savedComment;
   } catch (e) {
     // return an Error message describing the reason
@@ -124,7 +130,43 @@ exports.updateCommentById = async function (id, comment, tokenSubject) {
   }
 
   try {
+    return Comment.updateOne(
+      { _id: id },
+      {
+        $set: {
+          state: comment.state,
+        },
+      }
+    );
+  } catch (e) {
+    throw Error("Error occured while Finding the Reserve");
+  }
+};
 
+exports.rejectCommentById = async function (id, comment, tokenSubject) {
+  // Try Catch the awaited promise to handle the error
+  let MailService = require("../service/mailService");
+  let commentToEdit = await Comment.findById(id);
+  let ownerId = commentToEdit.classOwnerId;
+  let lesson = await Class.findById(commentToEdit.classId);
+
+  if (!commentToEdit) {
+    throw Error("Comment not found");
+  }
+  let teacher = await TeacherService.getTeacherById(tokenSubject);
+  if (!teacher) {
+    throw Error("Teacher not found");
+  }
+  if (tokenSubject != ownerId) {
+    throw Error("You are not the owner of this class");
+  }
+
+  try {
+    let subject = "Claserio - Tu comentario ha sido rechazado";
+    let text = `Tu comentario "${commentToEdit.comment}" ha sido rechazado por el siguiente motivo: "${comment.reason}"`;
+    let mailTo = lesson.email;
+
+    await MailService.sendMail(subject, text, mailTo);
     return Comment.updateOne(
       { _id: id },
       {
