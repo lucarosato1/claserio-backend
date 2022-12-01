@@ -123,7 +123,7 @@ exports.getReservesApprovedByStudentId = async function (studentId) {
     console.log("Student found");
     try {
         console.log("Getting reserves...");
-        return await Reserve.find({studentId: studentId, state: 'approved'});
+        return await Reserve.find({studentId: studentId, state: 'accepted'});
     } catch (e) {
         throw Error('Error while retrieving reserves');
     }
