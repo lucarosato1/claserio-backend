@@ -15,6 +15,7 @@ const teacherRoutes = require('./route/teacher');
 const classRoutes = require('./route/class');
 const reserveRoutes = require('./route/reserve');
 const commentRoutes = require('./route/comment');
+const mailRoutes = require('./route/mailer');
 
 // Middleware
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use("/api/v1", teacherRoutes);
 app.use("/api/v1", classRoutes);
 app.use("/api/v1", reserveRoutes);
 app.use("/api/v1", commentRoutes);
+app.use("/api/v1", mailRoutes);
 
 // routes
 app.get("/test", (req, res) => {
