@@ -13,7 +13,7 @@ router.get('/comment/:id', commentController.getCommentById);
 router.get('/comment/approved/classId/:classId', commentController.getApprovedCommentsByClassId);
 
 //get pending comments by teacherId
-router.get('/comment/pending/teacherId/:teacherId', commentController.getPendingCommentsByTeacherId);
+router.get('/comment/pending/teacher', commentController.getPendingCommentsByTeacherId);
 
 //get pending comments by classId
 router.get('/comment/pending/classId/:classId', commentController.getPendingCommentsByClassId);

@@ -6,7 +6,14 @@ const ClassService = require("../service/classService");
 const CommentService = require("../service/commentService");
 
 exports.createComment = async function (comment, tokenSubject) {
-  let teacherId = await ClassService.getClassById(comment.classId).teacherId;
+  let classObj = await ClassService.getClassById(comment.classId);
+  if (!classObj) {
+    throw Error("Class not found");
+  }
+  console.log("classObj", classObj);
+
+  let teacherId = classObj.teacherId;
+  console.log("teacherId", teacherId);
 
   let newComment = new Comment({
     classId: comment.classId,
@@ -68,11 +75,11 @@ exports.getCommentsByOwner = async function (query, page, limit) {
   }
 };
 
-exports.getPendingCommentsByTeacherId = async function (teacherId) {
+exports.getPendingCommentsByTeacherId = async function (tokenSubject) {
   // Try Catch the awaited promise to handle the error
   try {
     return await Comment.find({
-      classOwnerId: teacherId,
+      classOwnerId: tokenSubject,
       state: "pending",
     });
   } catch (e) {

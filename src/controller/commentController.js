@@ -35,10 +35,11 @@ exports.getApprovedCommentsByClassId = async function (req, res){
 }
 
 exports.getPendingCommentsByTeacherId = async function (req, res){
-    // Check the existence of the query parameters, If doesn't exists assign a default value
-    const teacherId = req.params.teacherId;
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
     try{
-        let comments = await commentService.getPendingCommentsByTeacherId(teacherId);
+        let comments = await commentService.getPendingCommentsByTeacherId(tokenSubject);
         return res.status(200).json({status: 200, data: comments, message: "Successfully got pending comments by teacher id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
