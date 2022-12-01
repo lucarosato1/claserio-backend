@@ -64,9 +64,9 @@ exports.updateCommentById = async function (req, res){
     let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
 
     const id = req.params.id;
-    const comment = req.body;
+    const newState = req.body;
     try{
-        const updatedComment = await commentService.updateCommentById(id, comment, tokenSubject);
+        const updatedComment = await commentService.updateCommentById(id, newState, tokenSubject);
         return res.status(200).json({status: 200, data: updatedComment, message: "Successfully comment updated"});
     } catch(e){
         return res.status(400).json({status: 400, message: e.message});

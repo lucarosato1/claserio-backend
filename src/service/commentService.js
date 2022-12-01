@@ -101,11 +101,20 @@ exports.getPendingCommentsByClassId = async function (classId) {
 
 exports.updateCommentById = async function (id, comment, tokenSubject) {
   // Try Catch the awaited promise to handle the error
+  let commentToEdit = await Comment.findById(id);
+  let ownerId = commentToEdit.classOwnerId;
+  if (!commentToEdit) {
+    throw Error("Comment not found");
+  }
+  let teacher = await TeacherService.getTeacherById(tokenSubject);
+  if (!teacher) {
+    throw Error("Teacher not found");
+  }
+  if (tokenSubject != ownerId) {
+    throw Error("You are not the owner of this class");
+  }
+
   try {
-    let teacher = await TeacherService.getTeacherById(tokenSubject);
-    if (teacher._id != comment.classOwnerId) {
-      throw Error("You are not the owner of this class");
-    }
 
     var oldComment = await Comment.findById(id);
 
