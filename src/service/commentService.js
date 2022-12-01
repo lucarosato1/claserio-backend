@@ -47,6 +47,15 @@ exports.createComment = async function (comment, tokenSubject) {
   }
 };
 
+exports.getCommentById = async function (id) {
+  try {
+    let comment = await Comment.findById(id);
+    return comment;
+  } catch (e) {
+    throw Error("Error while getting comment by id");
+  }
+};
+
 exports.getApprovedCommentsByClassId = async function (classId) {
   // Try Catch the awaited promise to handle the error
   try {
