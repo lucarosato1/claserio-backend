@@ -116,19 +116,11 @@ exports.updateCommentById = async function (id, comment, tokenSubject) {
 
   try {
 
-    var oldComment = await Comment.findById(id);
-
-    if (oldComment == null) {
-      return false;
-    }
-    oldComment.state = comment.state;
-    //oldComment.rank = rank;
-
     return Comment.updateOne(
       { _id: id },
       {
         $set: {
-          state: oldComment.state,
+          state: comment.state,
         },
       }
     );
