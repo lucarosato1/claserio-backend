@@ -67,7 +67,7 @@ exports.getReservesByTeacherId = async function (query, page, limit) {
 exports.getPendingReservesByTeacher = async function (teacherId) {
     // Try Catch the awaited promise to handle the error
     try {
-        return await Reserve.find({teacherId: teacherId, status: 'requested'});
+        return await Reserve.find({teacherId: teacherId, state: 'requested'});
     } catch (e) {
         throw Error("Error while getting reserves by teacher id");
     }
