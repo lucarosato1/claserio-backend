@@ -15,6 +15,9 @@ router.delete('/class/:id', classController.deleteClassById);
 router.get('/class/student/state/published', classController.getAllPublishedClasses);
 // get all classes by reserve
 router.get('/class/student/reserve', classController.getClassesByStudentReserve);
+// get all classes not reserved by student
+router.get('/class/student/not-reserve', classController.getClassesNotReservedByStudent);
+
 // get all classes by reserve approved
 router.get('/class/student/reserve/approved', classController.getClassesByStudentReserveApproved);
 // get all published classes by teacher
