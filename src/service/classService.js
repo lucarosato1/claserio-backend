@@ -37,9 +37,9 @@ exports.createClass = async function (classParam, tokenSubject) {
 exports.updateClassById = async function (id, classParam, tokenSubject) {
     //Find the old Class Object by the Id
     let oldClass = await Class.findById(id);
-
-    if(oldClass.teacherId !== tokenSubject) {
-        throw Error("You are not authorized to update this class");
+    console.log("classTeacherId: " + oldClass.teacherId, "tokenSubject: " + tokenSubject);
+    if(oldClass.teacherId != tokenSubject) {
+        throw Error("You are not authorized to update this class PUTO");
     }
 
     if (!oldClass){
