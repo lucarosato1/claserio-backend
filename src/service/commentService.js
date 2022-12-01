@@ -7,8 +7,7 @@ const CommentService = require("../service/commentService");
 
 exports.createComment = async function (comment, tokenSubject) {
   let teacherId = await ClassService.getClassById(comment.classId).teacherId;
-  let commentsForClass = await Comment.find({ classId: comment.classId, state: "approved" });
-  console.log("teacherId", teacherId);
+
   let newComment = new Comment({
     classId: comment.classId,
     classOwnerId: teacherId,
@@ -19,14 +18,18 @@ exports.createComment = async function (comment, tokenSubject) {
   try {
     // Saving the Comment
     let savedComment = await newComment.save();
+    let commentsForClass = await Comment.find({ classId: comment.classId });
     let totalRank = 0;
     commentsForClass.map((comment) => {
       totalRank += comment.rank;
     });
+
     let avgRank = totalRank / commentsForClass.length;
+    avgRank = parseFloat(avgRank).toFixed(2);
+    console.log("totalRank", totalRank, "lenght", commentsForClass.length,"avgRank", avgRank);
     await Class.findByIdAndUpdate(
       comment.classId,
-      { $push: { comments: savedComment._id }, rank: avgRank },
+      { rank: avgRank, $push: { comments: savedComment._id } },
 
     );
     return savedComment;
