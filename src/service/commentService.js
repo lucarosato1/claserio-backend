@@ -1,14 +1,12 @@
 // Getting the Newly created Mongoose Model we just created
 const Comment = require("../model/comment");
-const jwt = require("jsonwebtoken");
 const Class = require("../model/class");
 const ClassService = require("../service/classService");
-const CommentService = require("../service/commentService");
 
 exports.createComment = async function (comment, tokenSubject) {
   let teacherId = await ClassService.getClassById(comment.classId).teacherId;
-  let commentsForClass = await Comment.find({ classId: comment.classId, state: "approved" });
-  console.log("teacherId", teacherId);
+  let commentsForClass = await Comment.find({ classId: comment.classId });
+
   let newComment = new Comment({
     classId: comment.classId,
     classOwnerId: teacherId,
@@ -16,6 +14,7 @@ exports.createComment = async function (comment, tokenSubject) {
     comment: comment.comment,
     rank: comment.rank,
   });
+
   try {
     // Saving the Comment
     let savedComment = await newComment.save();
@@ -23,11 +22,12 @@ exports.createComment = async function (comment, tokenSubject) {
     commentsForClass.map((comment) => {
       totalRank += comment.rank;
     });
+
     let avgRank = totalRank / commentsForClass.length;
+
     await Class.findByIdAndUpdate(
       comment.classId,
-      { $push: { comments: savedComment._id }, rank: avgRank },
-
+      { $push: { comments: savedComment._id }, $set : {rank : avgRank} },
     );
     return savedComment;
   } catch (e) {
@@ -46,6 +46,7 @@ exports.getApprovedCommentsByClassId = async function (classId) {
   }
 };
 
+// FIXME
 exports.getCommentsByOwner = async function (query, page, limit) {
   // Options setup for the mongoose paginate
   var options = {

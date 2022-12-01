@@ -78,6 +78,33 @@ exports.getReservesByStudentId = async function (studentId) {
     }
 }
 
+exports.getAllReservesByStudentId = async function (studentId) {
+    console.log("Validating student...");
+    if (!await StudentService.getStudentById(studentId)){
+        console.log("Student not found");
+        throw Error("Student not found");
+    }
+    try {
+        console.log("Getting reserves...");
+        return await Reserve.find({studentId: studentId});
+    } catch (e) {
+        throw Error('Error while retrieving reserves');
+    }
+}
+
+exports.getReservesWhereNotStudentId = async function (id) {
+    console.log("StudentId: " + id);
+    if (!await StudentService.getStudentById(id)){
+        console.log("Student not found");
+        throw Error("Student not found");
+    }
+    try {
+        return await Reserve.find({studentId: {$ne: id}});
+    } catch (e) {
+        throw Error('Error while retrieving reserves');
+    }
+}
+
 exports.getReservesApprovedByStudentId = async function (studentId) {
     console.log("Validating student...");
     if (!await StudentService.getStudentById(studentId)){

@@ -116,6 +116,38 @@ exports.getClassesByStudentReserve = async function (tokenSubject) {
     }
 }
 
+exports.getClassesNotReservedByStudent = async function (tokenSubject) {
+    console.log("Getting reserves by student id...")
+    const reserves = await reserveService.getAllReservesByStudentId(tokenSubject);
+
+    const allClasses = await this.getAllPublishedClasses();
+    const allClassesIds = allClasses.map((item) => item._id.toString());
+
+    const reservesClassesIds = reserves.map((item) => item.classId.toString());
+    console.log("All Classes: " + JSON.stringify(allClassesIds));
+    console.log("Reserves Classes: " + JSON.stringify(reservesClassesIds));
+
+    let classes = [];
+
+    console.log("Getting classes by student reserve...")
+    try {
+        for (let i = 0; i < allClassesIds.length; i++) {
+
+            if (reservesClassesIds.indexOf(allClassesIds[i]) === -1) {
+
+                console.log("Adding class",allClassesIds[i] );
+                classes.push(await Class.findById(allClassesIds[i]));
+            }
+        }
+        console.log("Classes: " + JSON.stringify(classes));
+
+        return classes;
+    } catch (e) {
+        throw Error("Error while getting classes by student reserve")
+    }
+
+}
+
 exports.getClassesByStudentReserveApproved = async function (tokenSubject) {
     console.log("Getting reserves by student id...")
     const reserves = await reserveService.getReservesApprovedByStudentId(tokenSubject);
@@ -145,7 +177,7 @@ exports.getClassById = async function (id) {
     }
 }
 
-exports.getAllPublishedClasses = async function (page, limit) {
+exports.getAllPublishedClasses = async function () {
     try {
         return await Class.find({state: true})
     } catch (e) {
