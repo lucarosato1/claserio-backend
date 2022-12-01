@@ -1,200 +1,117 @@
-const Reserve = require('../model/reserve');
-const jwt = require('jsonwebtoken');
-const ClassService = require('../service/classService');
-const StudentService = require('../service/studentService');
-const TeacherService = require('../service/teacherService');
+// Getting the Newly created Mongoose Model we just created
+const Comment = require("../model/comment");
+const jwt = require("jsonwebtoken");
+const Class = require("../model/class");
+const ClassService = require("../service/classService");
+const CommentService = require("../service/commentService");
 
-exports.createReserve = async function (reserve, tokenSubject) {
-    let student = await StudentService.getStudentById(tokenSubject);
-    if(!student){throw Error("Student not found"); }
-    let lesson = await ClassService.getClassById(reserve.classId);
-    if(!lesson){throw Error("Lesson not found"); }
+exports.createComment = async function (comment, tokenSubject) {
+  let teacherId = await ClassService.getClassById(comment.classId).teacherId;
 
-    let newReserve = new Reserve({
-        classId: reserve.classId,
-        studentId: tokenSubject,
-        teacherId: lesson.teacherId,
-        date: reserve.date,
-        time: reserve.time,
-        status: 'requested',
-        timeRange: reserve.timeRange,
-        contactMail: student.email,
-        contactPhone: student.phone,
-        message: reserve.message
-    })
-    // validate if the class is already reserved
-    if (await Reserve.find({classId: reserve.classId, studentId: tokenSubject}).countDocuments() > 0){
-        throw Error("The class is already reserved");
+  let newComment = new Comment({
+    classId: comment.classId,
+    classOwnerId: teacherId,
+    publisherId: tokenSubject,
+    comment: comment.comment,
+    rank: comment.rank,
+  });
+  try {
+    // Saving the Comment
+    let savedComment = await newComment.save();
+    let commentsForClass = await Comment.find({ classId: comment.classId });
+    let totalRank = 0;
+    commentsForClass.map((comment) => {
+      totalRank += comment.rank;
+    });
+
+    let avgRank = totalRank / commentsForClass.length;
+    avgRank = parseFloat(avgRank).toFixed(2);
+    console.log("totalRank", totalRank, "lenght", commentsForClass.length,"avgRank", avgRank);
+    await Class.findByIdAndUpdate(
+      comment.classId,
+      { rank: avgRank, $push: { comments: savedComment._id } },
+
+    );
+    return savedComment;
+  } catch (e) {
+    // return an Error message describing the reason
+    console.log(e);
+    throw Error("Error while Creating Comment");
+  }
+};
+
+exports.getApprovedCommentsByClassId = async function (classId) {
+  // Try Catch the awaited promise to handle the error
+  try {
+    return await Comment.find({ classId: classId, state: "approved" });
+  } catch (e) {
+    throw Error("Error while getting comments by class id");
+  }
+};
+
+exports.getCommentsByOwner = async function (query, page, limit) {
+  // Options setup for the mongoose paginate
+  var options = {
+    page,
+    limit,
+  };
+  // Try Catch the awaited promise to handle the error
+  try {
+    console.log("Query", query);
+    var Comments = await Comments.paginate(query, options);
+    // Return the Userd list that was retured by the mongoose promise
+    return Comments;
+  } catch (e) {
+    // return a Error message describing the reason
+    console.log("error services", e);
+    throw Error("Error while Paginating Classes");
+  }
+};
+
+exports.getPendingCommentsByTeacherId = async function (teacherId) {
+  // Try Catch the awaited promise to handle the error
+  try {
+    return await Comment.find({
+      classOwnerId: teacherId,
+      state: "pending",
+    });
+  } catch (e) {
+    throw Error("Error while getting comments by teacher id");
+  }
+};
+
+exports.getPendingCommentsByClassId = async function (classId) {
+  // Try Catch the awaited promise to handle the error
+  try {
+    return await Comment.find({
+      classId: classId,
+      state: "pending",
+    });
+  } catch (e) {
+    throw Error("Error while getting comments by class id");
+  }
+};
+
+exports.updateCommentById = async function (id, comment) {
+  // Try Catch the awaited promise to handle the error
+  try {
+    var oldComment = await Comment.findById(id);
+
+    if (oldComment == null) {
+      return false;
     }
+    oldComment.state = comment.state;
+    //oldComment.rank = rank;
 
-    try {
-        // Saving the Reserve
-        let savedReserve = await newReserve.save();
-        return jwt.sign({
-            id: savedReserve._id
-        }, process.env.SECRET, {
-            expiresIn: 86400 // expires in 24 hours
-        });
-    } catch (e) {
-        // return an Error message describing the reason
-        console.log(e)
-        throw Error("Error while Creating Reserve")
-    }
-}
-
-exports.getReservesByTeacherId = async function (query, page, limit) {
-    // Try Catch the awaited promise to handle the error 
-    try {
-        const reserves = await Reserve.find(query)
-        .limit(limit * 1)
-        .skip((page - 1) * limit)
-        .exec();
-        
-        const count = await Reserve.countDocuments;
-        // Return the Userd list that was retured by the mongoose promise
-        return {
-            reserves,
-            totalPages: Math.ceil(count / limit),
-            currentPage: page
-        };
-
-    } catch (e) {
-        // return a Error message describing the reason 
-        throw Error('Error while Paginating Reserves');
-    }
-}
-
-exports.getReservesByStudentId = async function (studentId) {
-    console.log("Validating student...");
-    if (!await StudentService.getStudentById(studentId)){
-        console.log("Student not found");
-        throw Error("Student not found");
-    }
-    try {
-        console.log("Getting reserves...");
-        return await Reserve.find({studentId: studentId, state: 'requested'});
-    } catch (e) {
-        throw Error('Error while retrieving reserves');
-    }
-}
-
-exports.getReservesApprovedByStudentId = async function (studentId) {
-    console.log("Validating student...");
-    if (!await StudentService.getStudentById(studentId)){
-        console.log("Student not found");
-        throw Error("Student not found");
-    }
-    console.log("Student found");
-    try {
-        console.log("Getting reserves...");
-        return await Reserve.find({studentId: studentId, state: 'approved'});
-    } catch (e) {
-        throw Error('Error while retrieving reserves');
-    }
-}
-
-exports.updateReserve = async function (id, reserveParam, tokenSubject) {
-    let reserve = await Reserve.findById(id);
-    console.log("tokenSubject: " + tokenSubject);
-    console.log("Reserve: \n"+ JSON.stringify(reserve));
-    let student = await StudentService.getStudentById(tokenSubject);
-    let teacher = await TeacherService.getTeacherById(tokenSubject);
-
-    if(!student){student = await StudentService.getStudentById(reserve.studentId);}
-    if(!teacher){teacher = await TeacherService.getTeacherById(reserve.teacherId);}
-    console.log("student: " + student, "\n teacher: " + teacher);
-    if(student._id !== reserveParam.studentId || teacher._id !== reserveParam.teacherId){throw Error("Not authorized"); }
-    try {
-        //Find the old Reserve Object by the Id
-        let oldReserve = await Reserve.findById(id);
-
-        if (oldReserve == null){
-            return false;
-        }
-        oldReserve.state = reserveParam.state;
-        switch (reserveParam.state) {
-            case 'accepted': acceptReserve(oldReserve); break;
-            case 'canceled': cancelReserve(oldReserve); break;
-            case 'finished': finishReserve(oldReserve); break;
-        }
-        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
-
-        return Reserve.updateOne({_id: id},
-            {   
-                $set: {
-                    state: oldReserve.state
-                }
-            });
-    } catch (e) {
-        throw Error("Error occured while Finding the Reserve")
-    }
-}
-
-const acceptReserve = async function (reserve) {
-    try {
-        //Find the old Reserve Object by the Id
-        let oldReserve = await Reserve.findById(reserve._id);
-
-        if (oldReserve == null){
-            return false;
-        }
-        oldReserve.state = 'accepted';
-
-        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
-
-        return Reserve.updateOne({_id: reserve._id},
-            {   
-                $set: {
-                    state: oldReserve.state
-                }
-            });
-    } catch (e) {
-        throw Error("Error occured while Finding the Reserve")
-    }
-}
-
-const cancelReserve = async function (reserve) {
-    try {
-        //Find the old Reserve Object by the Id
-        let oldReserve = await Reserve.findById(reserve._id);
-
-        if (oldReserve == null){
-            return false;
-        }
-        oldReserve.state = 'canceled';
-
-        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
-
-        return Reserve.updateOne({_id: reserve._id},
-            {   
-                $set: {
-                    state: oldReserve.state
-                }
-            });
-    } catch (e) {
-        throw Error("Error occured while Finding the Reserve")
-    }
-}
-
-const finishReserve = async function (reserve) {
-    try {
-        //Find the old Reserve Object by the Id
-        let oldReserve = await Reserve.findById(reserve._id);
-
-        if (oldReserve == null){
-            return false;
-        }
-        oldReserve.state = 'finished';
-
-        console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
-
-        return Reserve.updateOne({_id: reserve._id},
-            {   
-                $set: {
-                    state: oldReserve.state
-                }
-            });
-    } catch (e) {
-        throw Error("Error occured while Finding the Reserve")
-    }
-}
+    return Comment.updateOne(
+      { _id: id },
+      {
+        $set: {
+          state: oldComment.state,
+        },
+      }
+    );
+  } catch (e) {
+    throw Error("Error occured while Finding the Reserve");
+  }
+};
