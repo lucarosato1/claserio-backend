@@ -3,7 +3,7 @@ const Comment = require("../model/comment");
 const jwt = require("jsonwebtoken");
 const Class = require("../model/class");
 const ClassService = require("../service/classService");
-const CommentService = require("../service/commentService");
+const TeacherService = require("../service/teacherService");
 
 exports.createComment = async function (comment, tokenSubject) {
   let classObj = await ClassService.getClassById(comment.classId);
@@ -99,9 +99,14 @@ exports.getPendingCommentsByClassId = async function (classId) {
   }
 };
 
-exports.updateCommentById = async function (id, comment) {
+exports.updateCommentById = async function (id, comment, tokenSubject) {
   // Try Catch the awaited promise to handle the error
   try {
+    let teacher = await TeacherService.getTeacherById(tokenSubject);
+    if (teacher._id != comment.classOwnerId) {
+      throw Error("You are not the owner of this class");
+    }
+
     var oldComment = await Comment.findById(id);
 
     if (oldComment == null) {
