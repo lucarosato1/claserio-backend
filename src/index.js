@@ -16,6 +16,7 @@ const classRoutes = require('./route/class');
 const reserveRoutes = require('./route/reserve');
 const commentRoutes = require('./route/comment');
 const mailRoutes = require('./route/mailer');
+const passwordRecoveyRoutes = require('./route/passwordRecovery');
 
 // Middleware
 app.use(express.json());
@@ -25,6 +26,7 @@ app.use("/api/v1", classRoutes);
 app.use("/api/v1", reserveRoutes);
 app.use("/api/v1", commentRoutes);
 app.use("/api/v1", mailRoutes);
+app.use("/api/v1", passwordRecoveyRoutes);
 
 // routes
 app.get("/test", (req, res) => {
