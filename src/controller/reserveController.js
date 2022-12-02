@@ -40,6 +40,18 @@ exports.getPendingReservesByTeacher = async function (req, res){
     }
 }
 
+exports.getAcceptedReservesByTeacher = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let tokenSubject = jwt.decode(token, {complete: true}).payload.id;
+    try{
+        const reserves = await reserveService.getAcceptedReservesByTeacher(tokenSubject);
+        return res.status(200).json({status: 200, data: reserves, message: "Successfully reserves retrieved"});
+    } catch(e){
+        return res.status(400).json({status: 400, message: e.message});
+    }
+}
+
 exports.getReservesByStudentId = async function (req, res){
     let token = req.headers.authorization;
     // get subject from token

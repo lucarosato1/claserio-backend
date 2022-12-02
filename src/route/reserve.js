@@ -12,6 +12,9 @@ router.get('/reserve/teacherId/:teacherId', reserveController.getReservesByTeach
 //get all pending reserves by teacher
 router.get('/reserve/teacher/pending', reserveController.getPendingReservesByTeacher);
 
+//get all accepted reserves by teacher
+router.get('/reserve/teacher/accepted', reserveController.getAcceptedReservesByTeacher);
+
 //get all reserves by studentId
 router.get('/reserve/studentId/', reserveController.getReservesByStudentId);
 

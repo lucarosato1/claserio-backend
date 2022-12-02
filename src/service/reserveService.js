@@ -73,6 +73,15 @@ exports.getPendingReservesByTeacher = async function (teacherId) {
     }
 }
 
+exports.getAcceptedReservesByTeacher = async function (teacherId) {
+    // Try Catch the awaited promise to handle the error
+    try {
+        return await Reserve.find({teacherId: teacherId, state: 'accepted'});
+    } catch (e) {
+        throw Error("Error while getting reserves by teacher id");
+    }
+}
+
 exports.getReservesByStudentId = async function (studentId) {
     console.log("Validating student...");
     if (!await StudentService.getStudentById(studentId)){
