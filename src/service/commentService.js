@@ -1,9 +1,9 @@
 // Getting the Newly created Mongoose Model we just created
 const Comment = require("../model/comment");
-const jwt = require("jsonwebtoken");
 const Class = require("../model/class");
 const ClassService = require("../service/classService");
 const TeacherService = require("../service/teacherService");
+const StudentService = require("./studentService");
 
 exports.createComment = async function (comment, tokenSubject) {
   let classObj = await ClassService.getClassById(comment.classId);

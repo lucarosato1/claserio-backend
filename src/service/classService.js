@@ -55,6 +55,7 @@ exports.updateClassById = async function (id, classParam, tokenSubject) {
         oldClass.price = classParam.price;
         oldClass.teacherId = classParam.teacherId;
         oldClass.image = classParam.image;
+        oldClass.state = classParam.state;
 
         console.log("NewClass: \n"+ JSON.stringify(oldClass));
 
@@ -69,7 +70,8 @@ exports.updateClassById = async function (id, classParam, tokenSubject) {
                     subject: oldClass.subject,
                     price: oldClass.price,
                     teacherId: oldClass.teacherId,
-                    image: oldClass.image
+                    image: oldClass.image,
+                    state: oldClass.state
                 }
             });
 
