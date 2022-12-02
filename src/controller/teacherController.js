@@ -10,7 +10,6 @@ const createTeacher = async function (req, res){
         birthday: req.body.birthday,
         email: req.body.email,
         phone: req.body.phone,
-        education: req.body.education,
         experience: req.body.experience,
         password: req.body.password,
         title: req.body.title
