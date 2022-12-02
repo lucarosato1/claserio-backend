@@ -143,12 +143,12 @@ exports.updateCommentById = async function (id, comment, tokenSubject) {
   }
 };
 
-exports.rejectCommentById = async function (id, comment, tokenSubject) {
+exports.rejectCommentById = async function (id, reason, tokenSubject) {
   // Try Catch the awaited promise to handle the error
   let MailService = require("../service/mailService");
   let commentToEdit = await Comment.findById(id);
   let ownerId = commentToEdit.classOwnerId;
-  let lesson = await Class.findById(commentToEdit.classId);
+  //let lesson = await Class.findById(commentToEdit.classId);
 
   if (!commentToEdit) {
     throw Error("Comment not found");
@@ -163,15 +163,15 @@ exports.rejectCommentById = async function (id, comment, tokenSubject) {
 
   try {
     let subject = "Claserio - Tu comentario ha sido rechazado";
-    let text = `Tu comentario "${commentToEdit.comment}" ha sido rechazado por el siguiente motivo: "${comment.reason}"`;
-    let mailTo = lesson.email;
+    let text = `Tu comentario "${commentToEdit.comment}" ha sido rechazado por el siguiente motivo: "${reason}"`;
+    let mailTo = "fpietra@gmail.com";//lesson.email;
 
     await MailService.sendMail(subject, text, mailTo);
     return Comment.updateOne(
       { _id: id },
       {
         $set: {
-          state: comment.state,
+          state: "blocked",
         },
       }
     );
