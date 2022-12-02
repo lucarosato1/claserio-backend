@@ -18,6 +18,7 @@ exports.createTeacher = async function (teacher) {
         email: teacher.email,
         phone: teacher.phone,
         education: teacher.education,
+        experience: teacher.experience,
         password: hashedPassword,
         title: teacher.title,
     })
@@ -90,8 +91,9 @@ exports.updateTeacherById = async function (id, teacher) {
         oldTeacher.phone = teacher.phone;
         oldTeacher.email = teacher.email;
         oldTeacher.education = teacher.education;
+        oldTeacher.experience = teacher.experience;
 
-        return await oldTeacher.updateOne({_id: id}, {$set: {firstName: teacher.firstName, lastName: teacher.lastName, phone: teacher.phone, email: teacher.email, education: teacher.education}});
+        return await oldTeacher.updateOne({_id: id}, {$set: {firstName: teacher.firstName, lastName: teacher.lastName, phone: teacher.phone, email: teacher.email, education: teacher.education, experience: teacher.experience}});
 
     } catch (e) {
         throw Error("Error while updating teacher by id")
