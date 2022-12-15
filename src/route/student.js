@@ -18,7 +18,7 @@ router.get("/students/phone/:phone", studentController.getStudentByPhone);
 router.put("/students", studentController.updateStudentById);
 
 // Update student password by id, email and password
-router.put("/students/password/:id/:password", studentController.updateStudentPasswordById);
+router.put("/students/password/:password", studentController.updateStudentPasswordById);
 
 // Delete student by ID ( PathVariable )
 router.delete("/students/:id", studentController.deleteStudentById);

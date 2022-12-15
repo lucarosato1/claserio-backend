@@ -50,8 +50,11 @@ const getStudentByPhone = async function (req, res){
 }
 
 const updateStudentPasswordById = async function (req, res){
+    let token = req.headers.authorization;
+    // get subject from token
+    let subject = jwt.decode(token, {complete: true}).payload.id;
     try {
-        let student = await StudentService.updateStudentPasswordById(req.params.id, req.params.password, req.body);
+        let student = await StudentService.updateStudentPasswordById(subject, req.params.password, req.body);
         return res.status(200).json({status: 200, data: student, message: "Successfully updated student password by id"});
     } catch (e) {
         return res.status(400).json({status: 400, message: e.message});
