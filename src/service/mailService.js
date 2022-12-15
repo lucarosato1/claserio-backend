@@ -1,9 +1,7 @@
-var nodemailer = require("nodemailer");
-const Comment = require("../model/comment");
-const Student = require("../model/student");
+const nodemailer = require("nodemailer");
 
 exports.sendMail = async function (subject, bodyText, mailTo) {
-  var sender = nodemailer.createTransport({
+  const sender = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
@@ -12,7 +10,7 @@ exports.sendMail = async function (subject, bodyText, mailTo) {
       pass: process.env.MAIL_PASSWORD//"pycopmugeefonfkr",
     },
   });
-  var mail = {
+  const mail = {
     from: process.env.MAIL_FROM,
     to: mailTo,
     subject: subject,//"Claserio - Comentario rechazado",
