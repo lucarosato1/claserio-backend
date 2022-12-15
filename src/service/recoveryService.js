@@ -33,7 +33,6 @@ exports.sendRecoveryEmail = async function (email) {
     );
 }
 
-// TODO: is not persisting the update wtf
 exports.validateRecoveryCode = async function (email, code, newPassword) {
     let recovery = await Recovery.findOne({email: email, code: code});
 
@@ -51,18 +50,19 @@ exports.validateRecoveryCode = async function (email, code, newPassword) {
         throw Error("Email not found");
     }
 
+    console.log("New password: " + newPassword);
     if (!student) {
         console.log("teacher");
         console.log(JSON.stringify(teacher));
         console.log("newPassword: " + newPassword);
-        return teacher.updateOne(
+        return Teacher.findOneAndUpdate(
             {email: email},
             {
                 $set:
                     {password: bcrypt.hashSync(newPassword, 8)}}
         );
     }else {
-        return student.updateOne(
+        return Student.findOneAndUpdate(
             {email: email},
             {$set:
                     {password: bcrypt.hashSync(newPassword, 8)}}

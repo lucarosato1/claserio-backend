@@ -61,22 +61,19 @@ exports.getTeacherByPhone = async function (phone) {
     }
 }
 
-// FIXME: isn't persisting the password
 exports.updateTeacherPasswordById = async function (id, password, newPassword) {
-    console.log("updateTeacherPasswordById", id, password, newPassword);
-    try{
-        console.log("Seeking teacher by id and pass...");
-        let oldTeacher = await Teacher.findOne({id, password});
-        console.log("Teacher found!");
+    let oldTeacher = await Teacher.findOne({_id: id});
 
-        if (!oldTeacher) {return false;}
-
-        oldTeacher.password = bcrypt.hashSync(newPassword, 8);
-        return await oldTeacher.updateOne({_id: id, password: password}, {$set: {password: newPassword}})
-
-    } catch (e) {
-        throw Error("Error while updating teacher password by id")
+    if (!bcrypt.compareSync(password, oldTeacher.password)) {
+        throw Error("Incorrect password");
     }
+
+    return Teacher.findOneAndUpdate({_id: id},
+        {
+        $set: {
+            password: bcrypt.hashSync(newPassword.newPassword, 8).toString()
+        }
+    });
 }
 
 exports.updateTeacherById = async function (id, teacher) {
