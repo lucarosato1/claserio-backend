@@ -203,6 +203,7 @@ exports.getAllUnpublishedClassesByTeacher = async function (tokenSubject) {
 }
 
 exports.filterClasses = async function filterClasses(query) {
+    query.state = true;
     try {
         return await Class.find(query);
     } catch (e) {
