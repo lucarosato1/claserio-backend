@@ -81,6 +81,17 @@ exports.getClassesByStudentReserveApproved = async function (req, res){
     }
 }
 
+exports.filterClasses = async function (req, res){
+    try {
+        const classes = await classService.filterClasses(req.body);
+        return res.status(200).json({status: 200, data: classes, message: "Succesfully Classes Returned"});
+    }
+    catch (e) {
+        return res.status(400).json({status: 400, message: e.message});
+    }
+
+}
+
 exports.updateClassById = async function (req, res){
     let token = req.headers.authorization;
     // get subject from token
@@ -108,7 +119,6 @@ exports.deleteClassById = async function (req, res){
 }
 
 exports.getAllPublishedClasses = async function (req, res){
-    const page = req.query.page ? req.query.page : 1
     const limit = req.query.limit ? req.query.limit : 10;
     try {
         const classes = await classService.getAllPublishedClasses(limit);

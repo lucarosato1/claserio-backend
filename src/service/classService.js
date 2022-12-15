@@ -201,3 +201,11 @@ exports.getAllUnpublishedClassesByTeacher = async function (tokenSubject) {
         throw Error("Error while getting classes")
     }
 }
+
+exports.filterClasses = async function filterClasses(query) {
+    try {
+        return await Class.find(query);
+    } catch (e) {
+        throw Error("Error while getting classes")
+    }
+}

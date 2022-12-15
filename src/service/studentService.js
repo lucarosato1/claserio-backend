@@ -45,11 +45,11 @@ exports.getStudentById = async function (id) {
 }
 
 exports.getStudentByEmail = async function (email) {
-    try {
-        return await Student.find({email});
-    } catch (e) {
-        throw Error("Error while getting student by email")
+    const student = await Student.findOne({email});
+    if (!student) {
+        return null;
     }
+    return student;
 }
 
 exports.getStudentByPhone = async function (phone) {

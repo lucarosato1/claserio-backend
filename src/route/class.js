@@ -18,6 +18,9 @@ router.get('/class/student/reserve', classController.getClassesByStudentReserve)
 // get all classes not reserved by student
 router.get('/class/student/not-reserve', classController.getClassesNotReservedByStudent);
 
+// filter classes by subject, type, frequency, stars
+router.post('/class/student/filter', classController.filterClasses);
+
 // get all classes by reserve approved
 router.get('/class/student/reserve/approved', classController.getClassesByStudentReserveApproved);
 // get all published classes by teacher
