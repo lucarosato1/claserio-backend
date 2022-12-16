@@ -12,7 +12,7 @@ router.get("/teachers/:id", teacherController.getTeacherById);
 router.put("/teachers", teacherController.updateTeacherById);
 
 // Update teacher password by id, email and password
-router.put("/teachers/password/:id/:email/:password", teacherController.updateTeacherPasswordById);
+router.put("/teachers/password/:password", teacherController.updateTeacherPasswordById);
 
 // Delete teacher by ID ( PathVariable )
 router.delete("/teachers/:id", teacherController.deleteTeacherById);
