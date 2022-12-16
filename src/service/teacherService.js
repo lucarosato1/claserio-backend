@@ -21,10 +21,9 @@ exports.createTeacher = async function (teacher) {
         password: hashedPassword,
         title: teacher.title,
     })
-
+    // Saving the Teacher
+    let savedTeacher = await newTeacher.save();
     try {
-        // Saving the Teacher
-        let savedTeacher = await newTeacher.save();
         return jwt.sign({
             id: savedTeacher._id
         }, process.env.SECRET, {

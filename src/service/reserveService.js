@@ -185,7 +185,7 @@ exports.updateReserve = async function (id, state, tokenSubject) {
         }
         console.log("NewReserve: \n"+ JSON.stringify(oldReserve));
 
-        return Reserve.updateOne({_id: id},
+        return Reserve.findOneAndUpdate({_id: id},
             {   
                 $set: {
                     state: oldReserve.state
